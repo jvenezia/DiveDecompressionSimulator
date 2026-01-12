@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dive Sim</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1 class="title">Dive Sim</h1>
+        <p class="subtitle">
+          Sketch a depth profile, then play the dive to see real-time tissue saturation and decompression stops.
+          Uses a compact B&uuml;hlmann ZHL-16C implementation.
+        </p>
+      </div>
+      <div class="status-pill">B&uuml;hlmann ZHL-16C</div>
+    </header>
+
+    <section class="grid">
+      <div class="panel canvas-wrap">
+        <div class="canvas-shell">
+          <canvas id="profile"></canvas>
+          <div class="canvas-overlay">
+            <span id="depth-readout">0 m</span>
+            <span id="time-readout">0:00</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="control-row">
+            <div class="field">
+              <label for="total-time">Total time (min)</label>
+              <input type="number" id="total-time" min="5" max="180" value="40" />
+            </div>
+            <div class="field">
+              <label for="max-depth">Max depth (m)</label>
+              <input type="number" id="max-depth" min="6" max="60" value="30" />
+            </div>
+          </div>
+          <div class="control-row">
+            <div class="field">
+              <label for="step-size">Step size (sec)</label>
+              <input type="number" id="step-size" min="5" max="120" value="20" />
+            </div>
+          </div>
+          <div class="buttons">
+            <button class="secondary" id="clear-btn">Clear sketch</button>
+            <button class="secondary" id="recalc-btn">Recalculate</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel readouts">
+        <div class="readout-header">
+          <div>
+            <strong>Realtime Readout</strong>
+            <div class="stat" id="current-state">Surface · 0 m</div>
+          </div>
+          <div class="status-pill" id="deco-state">No stops</div>
+        </div>
+
+        <div>
+          <strong>Tissue Saturation</strong>
+          <div class="tissues" id="tissue-list"></div>
+        </div>
+
+        <div>
+          <strong>Stops</strong>
+          <div class="stops" id="stops-list"></div>
+        </div>
+
+        <p class="footnote">
+          Draw a single profile left-to-right. The simulator assumes air (21% O<sub>2</sub> / 79% N<sub>2</sub>).
+          Tissues are shown as relative saturation percentages based on model output.
+        </p>
+      </div>
+    </section>
+  </div>
+  <script src="js/constants.js"></script>
+  <script src="js/buhlmann.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/sim.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>
