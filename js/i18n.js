@@ -5,7 +5,9 @@
         app: {
           title: "Dive Decompression Simulator",
           subtitle:
-            "Sketch a depth profile to see tissue saturation and decompression stops in real time. Uses a compact B&uuml;hlmann ZHL-16C implementation."
+            "Sketch a depth profile to see tissue saturation and decompression stops in real time. Uses a compact B&uuml;hlmann ZHL-16C implementation.",
+          description:
+            "Sketch a depth profile to see tissue saturation and decompression stops in real time. Uses a compact Buhlmann ZHL-16C implementation."
         },
         caution: {
           title: "Use with caution",
@@ -68,7 +70,9 @@
         app: {
           title: "Simulateur de désaturation en plongée",
           subtitle:
-            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de décompression en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C."
+            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de décompression en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C.",
+          description:
+            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de décompression en temps réel. Utilise une implémentation compacte du Buhlmann ZHL-16C."
         },
         caution: {
           title: "Utiliser avec prudence",
@@ -140,6 +144,11 @@
       const key = element.getAttribute("data-i18n");
       if (!key) return;
       const translation = i18next.t(key);
+      const targetAttribute = element.getAttribute("data-i18n-attr");
+      if (targetAttribute) {
+        element.setAttribute(targetAttribute, translation);
+        return;
+      }
       if (element.getAttribute("data-i18n-html") === "true") {
         element.innerHTML = translation;
       } else {
