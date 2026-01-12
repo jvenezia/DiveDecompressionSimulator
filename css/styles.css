@@ -212,35 +212,6 @@ button:active {
   color: var(--sea-700);
 }
 
-.tissues {
-  display: grid;
-  gap: 8px;
-}
-
-.tissue {
-  display: grid;
-  grid-template-columns: 44px 1fr 60px;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.85rem;
-  color: var(--ink-soft);
-}
-
-.tissue-bar {
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(16, 36, 58, 0.1);
-  overflow: hidden;
-}
-
-.tissue-bar span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--glow), var(--accent));
-  width: 0%;
-  transition: width 0.2s ease;
-}
-
 .stops {
   display: grid;
   gap: 8px;

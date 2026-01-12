@@ -12,7 +12,7 @@
     return `${m}:${String(s).padStart(2, "0")}`;
   }
 
-  function drawScene(ctx, canvas, state, profilePoints) {
+  function drawScene(ctx, canvas, state, profilePoints, timeline) {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     ctx.clearRect(0, 0, width, height);
@@ -54,6 +54,32 @@
     }
     ctx.restore();
 
+    if (timeline && timeline.length > 1) {
+      const maxSaturation = 1;
+      ctx.save();
+      ctx.strokeStyle = "rgba(255, 123, 84, 0.7)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      timeline.forEach((point, index) => {
+        const x = (point.time / state.totalMinutes) * width;
+        const y = height - clamp(point.saturation / maxSaturation, 0, 1) * height;
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255, 123, 84, 0.8)";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "top";
+      ctx.fillText("Sat", width - 8, 8);
+      ctx.fillText("100%", width - 8, 26);
+      ctx.fillText("0%", width - 8, height - 16);
+      ctx.restore();
+    }
+
     ctx.beginPath();
     profilePoints.forEach((point, index) => {
       const x = point.t * width;
@@ -88,7 +114,7 @@
     ctx.stroke();
   }
 
-  function updateReadouts({ snapshot, depthReadout, timeReadout, currentState, decoState, tissueList, stopsList }) {
+  function updateReadouts({ snapshot, depthReadout, timeReadout, currentState, decoState, stopsList }) {
     if (!snapshot) {
       return;
     }
@@ -116,23 +142,6 @@
       });
     }
 
-    tissueList.innerHTML = "";
-    const tissues = snapshot.tissues || [];
-    if (!tissues.length) {
-      tissueList.textContent = "No tissue data.";
-      return;
-    }
-    tissues.forEach((tissue, index) => {
-      const percent = clamp(tissue.saturation * 100, 0, 160);
-      const row = document.createElement("div");
-      row.className = "tissue";
-      row.innerHTML = `
-        <div>#${String(index + 1).padStart(2, "0")}</div>
-        <div class="tissue-bar"><span style="width:${percent}%"></span></div>
-        <div>${percent.toFixed(0)}%</div>
-      `;
-      tissueList.appendChild(row);
-    });
   }
 
   window.DiveSim.ui = {

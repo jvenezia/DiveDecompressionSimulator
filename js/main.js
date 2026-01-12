@@ -9,7 +9,6 @@ const depthReadout = document.getElementById("depth-readout");
 const timeReadout = document.getElementById("time-readout");
 const currentState = document.getElementById("current-state");
 const decoState = document.getElementById("deco-state");
-const tissueList = document.getElementById("tissue-list");
 const stopsList = document.getElementById("stops-list");
 const totalTimeInput = document.getElementById("total-time");
 const maxDepthInput = document.getElementById("max-depth");
@@ -69,8 +68,20 @@ function resizeCanvas() {
     return state.points.filter(Boolean);
   }
 
+  function setFlatProfile() {
+    const steps = getStepCount();
+    state.points = Array.from({ length: steps + 1 }, (_, index) => ({
+      t: index / steps,
+      depth: 0
+    }));
+  }
+
   function reindexPoints() {
     const existing = getActivePoints();
+    if (!existing.length) {
+      setFlatProfile();
+      return;
+    }
     state.points = [];
     existing.forEach((point) => addPoint(point));
   }
@@ -118,15 +129,14 @@ function resizeCanvas() {
 function updateFromTime(minutes) {
   const stepMinutes = Math.max(5, state.stepSec) / 60;
   const index = Math.min(state.timeline.length - 1, Math.round(minutes / stepMinutes));
-  updateReadouts({
-    snapshot: state.timeline[index],
-    depthReadout,
-    timeReadout,
-    currentState,
-    decoState,
-    tissueList,
-    stopsList
-  });
+    updateReadouts({
+      snapshot: state.timeline[index],
+      depthReadout,
+      timeReadout,
+      currentState,
+      decoState,
+      stopsList
+    });
   draw();
 }
 
@@ -137,7 +147,7 @@ function setCurrentTime(minutes) {
 
   function draw() {
     const profilePoints = normalizePoints(getActivePoints());
-    drawScene(ctx, canvas, state, profilePoints);
+    drawScene(ctx, canvas, state, profilePoints, state.timeline);
   }
 
   canvas.addEventListener("pointerdown", (event) => {
@@ -197,7 +207,7 @@ maxDepthInput.addEventListener("change", () => {
   });
 
   clearBtn.addEventListener("click", () => {
-    state.points = [];
+    setFlatProfile();
     state.lastPoint = null;
     state.lastIndex = null;
     rebuildTimeline();
@@ -212,6 +222,7 @@ if (canvasShell && "ResizeObserver" in window) {
   observer.observe(canvasShell);
 }
   resizeCanvas();
+  setFlatProfile();
   rebuildTimeline();
   setCurrentTime(0);
 })();
