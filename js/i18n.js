@@ -13,9 +13,9 @@
             "This tool is for educational purposes only. It must not be used for real dive planning. It may contain mistakes, is based on approximations, and was not tested for real diving."
         },
         labels: {
-          metres: "Depth (m)",
-          saturation: "saturation (%)",
-          minutes: "Time (min)"
+          metres: "Depth",
+          saturation: "saturation",
+          minutes: "Time"
         },
         inputs: {
           totalTime: "Total time (min)",
@@ -34,8 +34,8 @@
         },
         stops: {
           title: "Recommended stops",
-          depth: "Depth (m)",
-          time: "Duration (min)",
+          depth: "Depth",
+          time: "Duration",
           empty: "No decompression stops required."
         },
         info: {
@@ -76,9 +76,9 @@
             "Cet outil est uniquement à des fins pédagogiques. Il ne doit pas être utilisé pour planifier une plongée réelle. Il peut contenir des erreurs, est basé sur des approximations et n'a pas été testé pour la plongée réelle."
         },
         labels: {
-          metres: "Profondeur (m)",
-          saturation: "saturation (%)",
-          minutes: "Temps (min)"
+          metres: "Profondeur",
+          saturation: "saturation",
+          minutes: "Temps"
         },
         inputs: {
           totalTime: "Durée totale (min)",
@@ -97,8 +97,8 @@
         },
         stops: {
           title: "Paliers recommandés",
-          depth: "Profondeur (m)",
-          time: "Durée (min)",
+          depth: "Profondeur",
+          time: "Durée",
           empty: "Aucun palier de décompression requis."
         },
         info: {

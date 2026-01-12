@@ -1,7 +1,14 @@
 (() => {
   const { buildTimeline, buildStopSchedule } = window.DiveSim.sim;
   const { normalizePoints } = window.DiveSim.profile;
-  const { clamp, drawScene, updateReadouts, formatTime, getTranslation } = window.DiveSim.ui;
+  const {
+    clamp,
+    drawScene,
+    updateReadouts,
+    formatTime,
+    formatDepth,
+    formatPercent
+  } = window.DiveSim.ui;
 
   const canvas = document.getElementById("profile");
   const canvasContext = canvas.getContext("2d");
@@ -72,21 +79,21 @@
     const depthLabels = [];
     for (let index = 0; index <= gridRows; index++) {
       const depthValue = (index / gridRows) * state.maxDepth;
-      depthLabels.push(depthValue.toFixed(0));
+      depthLabels.push(formatDepth(depthValue));
     }
     renderAxis(depthAxis, depthLabels);
 
     const timeLabels = [];
     for (let index = 0; index <= gridColumns; index++) {
       const timeValue = (index / gridColumns) * state.totalMinutes;
-      timeLabels.push(timeValue.toFixed(0));
+      timeLabels.push(formatTime(timeValue));
     }
     renderAxis(timeAxis, timeLabels);
 
     const saturationLabels = [];
     for (let index = 0; index <= gridRows; index++) {
       const value = ((gridRows - index) / gridRows) * 100;
-      saturationLabels.push(value.toFixed(0));
+      saturationLabels.push(formatPercent(value));
     }
     const red = [239, 68, 68];
     const green = [34, 197, 94];
@@ -286,13 +293,12 @@
     }
     stopHeader.classList.remove("hidden");
     stopEmpty.classList.add("hidden");
-    const depthUnit = getTranslation("units.metersShort", "m");
     state.recommendedStops.forEach((stop) => {
       const row = document.createElement("div");
       row.className =
         "flex items-center justify-between rounded-xl border border-red-200/70 bg-red-50/70 px-3 py-2 text-xs text-red-900";
       const depthValue = document.createElement("span");
-      depthValue.textContent = `${stop.depth.toFixed(0)} ${depthUnit}`;
+      depthValue.textContent = formatDepth(stop.depth);
       const durationValue = document.createElement("span");
       durationValue.className = "font-mono text-red-900";
       durationValue.textContent = formatTime(stop.duration);
@@ -305,7 +311,6 @@
     if (!paramMaxDepth || !paramAvgDepth || !paramDuration) {
       return;
     }
-    const depthUnit = getTranslation("units.metersShort", "m");
     const maxDepth = state.timeline.length
       ? Math.max(...state.timeline.map((point) => point.depth))
       : 0;
@@ -332,8 +337,8 @@
     }
     const avgDepth = totalDuration > 0 ? weightedDepth / totalDuration : 0;
     const immersionDuration = startTime !== null && endTime !== null ? endTime - startTime : 0;
-    paramMaxDepth.textContent = `${maxDepth.toFixed(1)} ${depthUnit}`;
-    paramAvgDepth.textContent = `${avgDepth.toFixed(1)} ${depthUnit}`;
+    paramMaxDepth.textContent = formatDepth(maxDepth);
+    paramAvgDepth.textContent = formatDepth(avgDepth);
     paramDuration.textContent = formatTime(immersionDuration);
   }
 

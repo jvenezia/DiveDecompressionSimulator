@@ -12,6 +12,17 @@
     return `${minutesPart}:${String(secondsPart).padStart(2, "0")}`;
   }
 
+  function formatDepth(depthMeters) {
+    const value = Number.isFinite(depthMeters) ? depthMeters : 0;
+    const decimals = value % 1 === 0 ? 0 : 1;
+    return `${value.toFixed(decimals)}m`;
+  }
+
+  function formatPercent(value) {
+    const safeValue = Number.isFinite(value) ? value : 0;
+    return `${Math.round(safeValue)}%`;
+  }
+
   function getTranslation(key, fallback) {
     if (window.i18next && typeof window.i18next.t === "function") {
       return window.i18next.t(key);
@@ -165,14 +176,15 @@
       return;
     }
     const depth = snapshot.depth || 0;
-    const depthUnit = getTranslation("units.metersShort", "m");
-    depthReadout.textContent = `${depth.toFixed(1)} ${depthUnit}`;
+    depthReadout.textContent = formatDepth(depth);
     timeReadout.textContent = formatTime(snapshot.time);
   }
 
   window.DiveSim.ui = {
     clamp,
     formatTime,
+    formatDepth,
+    formatPercent,
     drawScene,
     updateReadouts,
     getTranslation
