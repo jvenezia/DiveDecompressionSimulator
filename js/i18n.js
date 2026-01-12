@@ -13,9 +13,9 @@
             "This tool is for educational purposes only. It must not be used for real dive planning. It may contain mistakes, is based on approximations, and was not tested for real diving."
         },
         labels: {
-          metres: "meters",
+          metres: "Depth (m)",
           saturation: "saturation (%)",
-          minutes: "minutes"
+          minutes: "Time (min)"
         },
         inputs: {
           totalTime: "Total time (min)",
@@ -25,6 +25,12 @@
         },
         buttons: {
           clear: "Clear"
+        },
+        stops: {
+          title: "Recommended stops",
+          depth: "Depth (m)",
+          time: "Duration (min)",
+          empty: "No decompression stops required."
         },
         info: {
           line1: "The simulator assumes air (21% O<sub>2</sub> / 79% N<sub>2</sub>).",
@@ -64,9 +70,9 @@
             "Cet outil est uniquement à des fins pédagogiques. Il ne doit pas être utilisé pour planifier une plongée réelle. Il peut contenir des erreurs, est basé sur des approximations et n'a pas été testé pour la plongée réelle."
         },
         labels: {
-          metres: "mètres",
+          metres: "Profondeur (m)",
           saturation: "saturation (%)",
-          minutes: "minutes"
+          minutes: "Temps (min)"
         },
         inputs: {
           totalTime: "Durée totale (min)",
@@ -76,6 +82,12 @@
         },
         buttons: {
           clear: "Effacer"
+        },
+        stops: {
+          title: "Paliers recommandés",
+          depth: "Profondeur (m)",
+          time: "Durée (min)",
+          empty: "Aucun palier de décompression requis."
         },
         info: {
           line1: "Le simulateur suppose de l'air (21% O<sub>2</sub> / 79% N<sub>2</sub>).",

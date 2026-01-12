@@ -58,17 +58,17 @@
     }));
   }
 
-  function buildStops(ceilingMeters) {
+  function getStopDepth(ceilingMeters) {
     if (ceilingMeters <= 0.1) {
-      return [];
+      return null;
     }
     const rounded = Math.ceil(ceilingMeters / 3) * 3;
-    return [{ depth: rounded, time: 1 }];
+    return rounded;
   }
 
   window.DiveSim.buhlmann = {
     BuhlmannModel,
     calculateTissueSaturation,
-    buildStops
+    getStopDepth
   };
 })();

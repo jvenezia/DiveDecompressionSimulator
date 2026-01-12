@@ -1,7 +1,7 @@
 (() => {
-  const { buildTimeline } = window.DiveSim.sim;
+  const { buildTimeline, buildStopSchedule } = window.DiveSim.sim;
   const { normalizePoints } = window.DiveSim.profile;
-  const { clamp, drawScene, updateReadouts } = window.DiveSim.ui;
+  const { clamp, drawScene, updateReadouts, formatTime, getTranslation } = window.DiveSim.ui;
 
   const canvas = document.getElementById("profile");
   const canvasContext = canvas.getContext("2d");
@@ -17,6 +17,9 @@
   const gradientFactorLowValue = document.getElementById("gf-low-value");
   const gradientFactorHighValue = document.getElementById("gf-high-value");
   const clearButton = document.getElementById("clear-btn");
+  const stopList = document.getElementById("stop-list");
+  const stopHeader = document.getElementById("stop-header");
+  const stopEmpty = document.getElementById("stop-empty");
 
   const state = {
     points: [],
@@ -27,6 +30,7 @@
     maxDepth: Number(maxDepthInput.value),
     stepSeconds: 60,
     timeline: [],
+    recommendedStops: [],
     currentTime: 0,
     hoverTime: null,
     hoverIndex: null,
@@ -203,7 +207,9 @@
       gradientFactorLow: state.gradientFactorLow,
       gradientFactorHigh: state.gradientFactorHigh
     });
+    state.recommendedStops = buildStopSchedule(state.timeline);
     state.currentTime = clamp(state.currentTime, 0, state.totalMinutes);
+    renderStops();
     updateAxes();
     draw();
     updateFromTime(state.currentTime);
@@ -261,7 +267,34 @@
 
   function draw() {
     const profilePoints = normalizePoints(getActivePoints());
-    drawScene(canvasContext, canvas, state, profilePoints, state.timeline);
+    drawScene(canvasContext, canvas, state, profilePoints, state.timeline, state.recommendedStops);
+  }
+
+  function renderStops() {
+    if (!stopList || !stopHeader || !stopEmpty) {
+      return;
+    }
+    stopList.innerHTML = "";
+    if (!state.recommendedStops.length) {
+      stopHeader.classList.add("hidden");
+      stopEmpty.classList.remove("hidden");
+      return;
+    }
+    stopHeader.classList.remove("hidden");
+    stopEmpty.classList.add("hidden");
+    const depthUnit = getTranslation("units.metersShort", "m");
+    state.recommendedStops.forEach((stop) => {
+      const row = document.createElement("div");
+      row.className =
+        "flex items-center justify-between rounded-xl border border-red-200/70 bg-red-50/70 px-3 py-2 text-xs text-red-900";
+      const depthValue = document.createElement("span");
+      depthValue.textContent = `${stop.depth.toFixed(0)} ${depthUnit}`;
+      const durationValue = document.createElement("span");
+      durationValue.className = "font-mono text-red-900";
+      durationValue.textContent = formatTime(stop.duration);
+      row.append(depthValue, durationValue);
+      stopList.appendChild(row);
+    });
   }
 
   canvas.addEventListener("pointerdown", (event) => {

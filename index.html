@@ -118,6 +118,17 @@
       </div>
 
       <div class="flex h-full flex-col gap-3 rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
+        <div class="rounded-2xl border border-slate-200/70 bg-white/80 px-4 py-4">
+          <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span data-i18n="stops.title"></span>
+          </div>
+          <div class="mt-3 hidden grid grid-cols-[1fr_auto] gap-x-4 text-[10px] font-semibold uppercase tracking-wide text-slate-400" id="stop-header">
+            <span data-i18n="stops.depth"></span>
+            <span data-i18n="stops.time"></span>
+          </div>
+          <div class="mt-2 space-y-2" id="stop-list"></div>
+          <p class="mt-2 text-xs text-slate-400" id="stop-empty" data-i18n="stops.empty"></p>
+        </div>
         <div class="mt-auto space-y-4 text-xs leading-relaxed text-slate-500">
           <p data-i18n="info.line1" data-i18n-html="true"></p>
           <p data-i18n="info.line2" data-i18n-html="true"></p>

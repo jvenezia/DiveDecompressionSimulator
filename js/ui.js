@@ -19,7 +19,7 @@
     return fallback;
   }
 
-  function drawScene(canvasContext, canvas, state, profilePoints, timeline) {
+  function drawScene(canvasContext, canvas, state, profilePoints, timeline, stopSchedule) {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     canvasContext.clearRect(0, 0, width, height);
@@ -107,6 +107,22 @@
       canvasContext.restore();
     }
 
+    if (stopSchedule && stopSchedule.length) {
+      canvasContext.save();
+      canvasContext.strokeStyle = "rgba(239, 68, 68, 0.85)";
+      canvasContext.lineWidth = 3;
+      stopSchedule.forEach((stop) => {
+        const startX = (stop.startTime / state.totalMinutes) * width;
+        const endX = (stop.endTime / state.totalMinutes) * width;
+        const yPosition = (stop.depth / state.maxDepth) * height;
+        canvasContext.beginPath();
+        canvasContext.moveTo(startX, yPosition);
+        canvasContext.lineTo(endX, yPosition);
+        canvasContext.stroke();
+      });
+      canvasContext.restore();
+    }
+
     canvasContext.beginPath();
     profilePoints.forEach((point, index) => {
       const xPosition = point.timeFraction * width;
@@ -172,6 +188,7 @@
     clamp,
     formatTime,
     drawScene,
-    updateReadouts
+    updateReadouts,
+    getTranslation
   };
 })();
