@@ -5,7 +5,7 @@
         app: {
           title: "Dive Decompression Simulator",
           subtitle:
-            "Sketch a depth profile to see tissue saturation and decompression stops in real time. Uses a compact B&uuml;hlmann ZHL-16C implementation.",
+            "Sketch a depth profile to see tissue saturation and decompression stops in real time. Uses a compact Bühlmann ZHL-16C implementation.",
           description:
             "Sketch a depth profile to see tissue saturation and decompression stops in real time. Uses a compact Buhlmann ZHL-16C implementation."
         },
@@ -43,11 +43,13 @@
         info: {
           line1: "The simulator assumes air at 21% O<sub>2</sub> and 79% N<sub>2</sub>.",
           line2:
-            "The green-to-red line shows relative saturation over time (higher value means more saturation).",
+            "The green-to-red line shows nitrogen tissue saturation over time (higher value means more saturation).",
           line3:
-            "The red ceiling zone marks the shallowest (nearest-to-surface depth) you're allowed to be at right now based on tissue loading and GF settings. If you enter that zone (closer to the surface), decompression stops are required before you can ascend further.",
+            "The red ceiling zone marks the shallowest (nearest-to-surface depth) you're allowed to be at right now. If you approach that zone during ascent, decompression stops are required before you can go shallower. This is the zone computed by the Bühlmann algorithm.",
           line4:
-            "GF Low applies at depth and GF High applies near the surface, with values blended between them during ascent. Lower GF values make the ceiling deeper (more conservative); higher values let the ceiling sit closer to the surface."
+            "The horizontal red lines indicate the recommended stops. They are derived from the red zone to avoid ever exceeding it.",
+          line5:
+            "GF Low applies at depth. The lower the value, the deeper the stops begin.<br>GF High applies near the surface. The lower the value, the longer the stops last.<br>Lower GF values make stops deeper and longer, which is more conservative. 100% is the least conservative."
         },
         language: {
           label: "Language",
@@ -70,9 +72,9 @@
         app: {
           title: "Simulateur de désaturation en plongée",
           subtitle:
-            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de décompression en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C.",
+            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de désaturation en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C.",
           description:
-            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de décompression en temps réel. Utilise une implémentation compacte du Buhlmann ZHL-16C."
+            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de désaturation en temps réel. Utilise une implémentation compacte du Buhlmann ZHL-16C."
         },
         caution: {
           title: "Utiliser avec prudence",
@@ -106,15 +108,15 @@
           empty: "Aucun palier requis."
         },
         info: {
-          line1: "Le simulateur suppose de l'air 21% d'oxygène et 79% d'azote.",
+          line1: "Le simulateur suppose de l'air à 21 % d'oxygène et 79 % d'azote.",
           line2:
-            "La ligne verte/rouge indique la saturation des tissues en azote (valeur plus élevée = plus de saturation).",
+            "La ligne verte/rouge indique la saturation des tissus en azote (valeur plus élevée = plus de saturation).",
           line3:
-            "La zone rouge indique la profondeur la plus faible autorisée. En s'y approchant lors de la remontée, des paliers sont requis avant de pouvoir remonter davantage.<br>C'est cette zone que l'algorithme Bulhmann calcule.",
+            "La zone rouge indique la profondeur la plus faible autorisée. En s'y approchant lors de la remontée, des paliers sont requis avant de pouvoir remonter davantage.<br>C'est cette zone que l'algorithme Bühlmann calcule.",
           line4:
-            "Les lignes rouges horizontales indique les paliers recommendés. Ils sont déduis de la zone rouge, afin de ne jamais la dépasser.",
+            "Les lignes rouges horizontales indiquent les paliers recommandés. Ils sont déduits de la zone rouge, afin de ne jamais la dépasser.",
           line5:
-            "GF Bas agit en profondeur. Plus la valeur est faible, plus les paliers commenceront profond.<br>GF Haut agit près de la surface. Plus la valeur est faible, plus les paliers dureront longtemps.<br>La combinaison des GF plus bas rendent les paliers plus profonds et plus long, plus conservateur. 100% est le moins conservateur."
+            "GF Bas agit en profondeur. Plus la valeur est faible, plus les paliers commenceront profonds.<br>GF Haut agit près de la surface. Plus la valeur est faible, plus les paliers dureront longtemps.<br>Des GF plus bas rendent les paliers plus profonds et plus longs, donc plus conservateurs. 100 % est le moins conservateur."
         },
         language: {
           label: "Langue",

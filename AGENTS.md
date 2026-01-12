@@ -29,6 +29,7 @@ Deprecation and other warnings must be fixed at the source (do not ignore).
   - When removing functions/fields, do not leave placeholder notes in code.
   - Only add inline comments when explicitly requested by the user.
   - If explanation is truly needed, update README or tests instead of code comments.
+- Text encoding: Use literal characters for accents and symbols. Do not use HTML entities like `&egrave;`.
 - Objects & State: Favor small cohesive classes, dataclasses for data. Composition over inheritance. Avoid hidden mutable state.
 - Pythonic Practices: Use comprehensions, unpacking, with, f-strings, pathlib. Add type hints (typing).
 - Testing: Fast, deterministic, behavior-focused. One logical assert per test.
