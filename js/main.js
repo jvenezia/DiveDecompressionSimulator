@@ -125,6 +125,37 @@
     existing.forEach((point) => addPoint(point));
   }
 
+  function retimePoints(oldTotal, newTotal) {
+    const existing = getActivePoints();
+    if (!existing.length) {
+      setFlatProfile();
+      return;
+    }
+    const timed = existing.map((point) => ({
+      time: point.t * oldTotal,
+      depth: point.depth
+    }));
+    state.points = [];
+    timed.forEach((point) => {
+      if (point.time > newTotal) {
+        return;
+      }
+      const t = newTotal > 0 ? point.time / newTotal : 0;
+      addPoint({ t, depth: point.depth });
+    });
+    if (newTotal > oldTotal) {
+      const last = timed[timed.length - 1];
+      if (!last || last.depth <= 0.1) {
+        addPoint({ t: 1, depth: 0 });
+      }
+    }
+    if (!getActivePoints().length) {
+      setFlatProfile();
+    }
+    state.lastPoint = null;
+    state.lastIndex = null;
+  }
+
   function addPoint(point) {
     const { index, t, depth } = quantizePoint(point);
     state.points[index] = { t, depth };
@@ -278,10 +309,11 @@ function updateFromTime(minutes) {
   });
 
   totalTimeInput.addEventListener("change", () => {
+    const previousTotal = state.totalMinutes;
     state.totalMinutes = clamp(Number(totalTimeInput.value) || 40, 5, 180);
     totalTimeInput.value = state.totalMinutes;
     updateAxes();
-    reindexPoints();
+    retimePoints(previousTotal, state.totalMinutes);
     rebuildTimeline();
     setCurrentTime(0);
   });
