@@ -35,7 +35,8 @@
     getCeiling(gf) {
       let maxAmbient = 1.0;
       this.compartments.forEach((compartment) => {
-        const denominator = 1 + gf * (compartment.b - 1);
+        // Buhlmann M-line uses P_amb = (P_t - a) * b, so GF uses 1/b in the slope.
+        const denominator = gf / compartment.b + (1 - gf);
         if (denominator <= 0) {
           return;
         }
