@@ -1,6 +1,6 @@
 # Dive Decompression Simulator
 
-Access the simulator here: https://jvenezia.github.io/DiveDecompressionSimulator
+**Access the simulator here**: https://jvenezia.github.io/DiveDecompressionSimulator
 
 Dive Decompression Simulator visualizes a drawn dive profile and shows estimated tissue saturation
 along with a decompression ceiling based on a compact Buhlmann ZHL-16C model.
