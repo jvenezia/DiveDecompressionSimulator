@@ -4,19 +4,19 @@
   const { clamp, drawScene, updateReadouts } = window.DiveSim.ui;
 
   const canvas = document.getElementById("profile");
-  const ctx = canvas.getContext("2d");
+  const canvasContext = canvas.getContext("2d");
   const depthReadout = document.getElementById("depth-readout");
   const timeReadout = document.getElementById("time-readout");
   const depthAxis = document.getElementById("depth-axis");
   const timeAxis = document.getElementById("time-axis");
-  const satAxis = document.getElementById("sat-axis");
+  const saturationAxis = document.getElementById("sat-axis");
   const totalTimeInput = document.getElementById("total-time");
   const maxDepthInput = document.getElementById("max-depth");
-  const gfLowInput = document.getElementById("gf-low");
-  const gfHighInput = document.getElementById("gf-high");
-  const gfLowValue = document.getElementById("gf-low-value");
-  const gfHighValue = document.getElementById("gf-high-value");
-  const clearBtn = document.getElementById("clear-btn");
+  const gradientFactorLowInput = document.getElementById("gf-low");
+  const gradientFactorHighInput = document.getElementById("gf-high");
+  const gradientFactorLowValue = document.getElementById("gf-low-value");
+  const gradientFactorHighValue = document.getElementById("gf-high-value");
+  const clearButton = document.getElementById("clear-btn");
 
   const state = {
     points: [],
@@ -25,13 +25,13 @@
     lastIndex: null,
     totalMinutes: Number(totalTimeInput.value),
     maxDepth: Number(maxDepthInput.value),
-    stepSec: 60,
+    stepSeconds: 60,
     timeline: [],
     currentTime: 0,
     hoverTime: null,
     hoverIndex: null,
-    gfLow: (Number(gfLowInput?.value) || 30) / 100,
-    gfHigh: (Number(gfHighInput?.value) || 85) / 100
+    gradientFactorLow: (Number(gradientFactorLowInput?.value) || 30) / 100,
+    gradientFactorHigh: (Number(gradientFactorHighInput?.value) || 85) / 100
   };
 
   function resizeCanvas() {
@@ -42,74 +42,75 @@
     const ratio = window.devicePixelRatio || 1;
     canvas.width = rect.width * ratio;
     canvas.height = rect.height * ratio;
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    canvasContext.setTransform(ratio, 0, 0, ratio, 0, 0);
     draw();
   }
 
-  function renderAxis(axisEl, labels, styleForIndex) {
-    if (!axisEl) return;
-    axisEl.innerHTML = "";
+  function renderAxis(axisElement, labels, styleForIndex) {
+    if (!axisElement) return;
+    axisElement.innerHTML = "";
     labels.forEach((label, index) => {
       const span = document.createElement("span");
       span.textContent = label;
       if (styleForIndex) {
         Object.assign(span.style, styleForIndex(index, labels.length));
       }
-      axisEl.appendChild(span);
+      axisElement.appendChild(span);
     });
   }
 
   function updateAxes() {
-    const gridY = 6;
-    const gridX = 8;
+    const gridRows = 6;
+    const gridColumns = 8;
     const depthLabels = [];
-    for (let i = 0; i <= gridY; i++) {
-      const depthValue = (i / gridY) * state.maxDepth;
+    for (let index = 0; index <= gridRows; index++) {
+      const depthValue = (index / gridRows) * state.maxDepth;
       depthLabels.push(depthValue.toFixed(0));
     }
     renderAxis(depthAxis, depthLabels);
 
     const timeLabels = [];
-    for (let i = 0; i <= gridX; i++) {
-      const timeValue = (i / gridX) * state.totalMinutes;
+    for (let index = 0; index <= gridColumns; index++) {
+      const timeValue = (index / gridColumns) * state.totalMinutes;
       timeLabels.push(timeValue.toFixed(0));
     }
     renderAxis(timeAxis, timeLabels);
 
-    const satLabels = [];
-    for (let i = 0; i <= gridY; i++) {
-      const value = ((gridY - i) / gridY) * 100;
-      satLabels.push(value.toFixed(0));
+    const saturationLabels = [];
+    for (let index = 0; index <= gridRows; index++) {
+      const value = ((gridRows - index) / gridRows) * 100;
+      saturationLabels.push(value.toFixed(0));
     }
     const red = [239, 68, 68];
     const green = [34, 197, 94];
-    renderAxis(satAxis, satLabels, (index, length) => {
-      const t = length > 1 ? index / (length - 1) : 0;
-      const channel = (a, b) => Math.round(a + (b - a) * t);
+    renderAxis(saturationAxis, saturationLabels, (index, length) => {
+      const interpolation = length > 1 ? index / (length - 1) : 0;
+      const channel = (startChannel, endChannel) =>
+        Math.round(startChannel + (endChannel - startChannel) * interpolation);
       return {
         color: `rgb(${channel(red[0], green[0])}, ${channel(red[1], green[1])}, ${channel(red[2], green[2])})`
       };
     });
   }
 
-  function toProfile(x, y) {
+  function mapPointerToProfilePoint(pointerX, pointerY) {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
-    const t = clamp(x / width, 0, 1);
-    const depth = clamp(y / height, 0, 1) * state.maxDepth;
-    return { t, depth };
+    const timeFraction = clamp(pointerX / width, 0, 1);
+    const depth = clamp(pointerY / height, 0, 1) * state.maxDepth;
+    return { timeFraction, depth };
   }
 
   function getStepCount() {
-    return Math.max(1, Math.ceil((state.totalMinutes * 60) / state.stepSec));
+    return Math.max(1, Math.ceil((state.totalMinutes * 60) / state.stepSeconds));
   }
 
   function quantizePoint(point) {
     const steps = getStepCount();
-    const index = clamp(Math.round(point.t * steps), 0, steps);
+    const index = clamp(Math.round(point.timeFraction * steps), 0, steps);
     return {
       index,
-      t: index / steps,
+      timeFraction: index / steps,
       depth: point.depth
     };
   }
@@ -121,7 +122,7 @@
   function setFlatProfile() {
     const steps = getStepCount();
     state.points = Array.from({ length: steps + 1 }, (_, index) => ({
-      t: index / steps,
+      timeFraction: index / steps,
       depth: 0
     }));
   }
@@ -143,7 +144,7 @@
       return;
     }
     const timed = existing.map((point) => ({
-      time: point.t * oldTotal,
+      time: point.timeFraction * oldTotal,
       depth: point.depth
     }));
     state.points = [];
@@ -151,13 +152,13 @@
       if (point.time > newTotal) {
         return;
       }
-      const t = newTotal > 0 ? point.time / newTotal : 0;
-      addPoint({ t, depth: point.depth });
+      const timeFraction = newTotal > 0 ? point.time / newTotal : 0;
+      addPoint({ timeFraction, depth: point.depth });
     });
     if (newTotal > oldTotal) {
       const last = timed[timed.length - 1];
       if (!last || last.depth <= 0.1) {
-        addPoint({ t: 1, depth: 0 });
+        addPoint({ timeFraction: 1, depth: 0 });
       }
     }
     if (!getActivePoints().length) {
@@ -168,9 +169,9 @@
   }
 
   function addPoint(point) {
-    const { index, t, depth } = quantizePoint(point);
-    state.points[index] = { t, depth };
-    state.lastPoint = { t, depth };
+    const { index, timeFraction, depth } = quantizePoint(point);
+    state.points[index] = { timeFraction, depth };
+    state.lastPoint = { timeFraction, depth };
     state.lastIndex = index;
   }
 
@@ -184,13 +185,13 @@
     const start = Math.min(from.index, to.index);
     const end = Math.max(from.index, to.index);
     const span = Math.max(1, end - start);
-    for (let i = start; i <= end; i++) {
-      const mix = (i - start) / span;
+    for (let index = start; index <= end; index++) {
+      const mix = (index - start) / span;
       const depth = from.depth + (to.depth - from.depth) * mix;
-      const t = i / getStepCount();
-      state.points[i] = { t, depth };
+      const timeFraction = index / getStepCount();
+      state.points[index] = { timeFraction, depth };
     }
-    state.lastPoint = { t: to.t, depth: to.depth };
+    state.lastPoint = { timeFraction: to.timeFraction, depth: to.depth };
     state.lastIndex = to.index;
   }
 
@@ -198,9 +199,9 @@
     state.timeline = buildTimeline({
       points: getActivePoints(),
       totalMinutes: state.totalMinutes,
-      stepSec: state.stepSec,
-      gfLow: state.gfLow,
-      gfHigh: state.gfHigh
+      stepSeconds: state.stepSeconds,
+      gradientFactorLow: state.gradientFactorLow,
+      gradientFactorHigh: state.gradientFactorHigh
     });
     state.currentTime = clamp(state.currentTime, 0, state.totalMinutes);
     updateAxes();
@@ -208,16 +209,16 @@
     updateFromTime(state.currentTime);
   }
 
-function updateFromTime(minutes) {
-  const stepMinutes = Math.max(5, state.stepSec) / 60;
-  const index = Math.min(state.timeline.length - 1, Math.round(minutes / stepMinutes));
+  function updateFromTime(minutes) {
+    const stepMinutes = Math.max(5, state.stepSeconds) / 60;
+    const index = Math.min(state.timeline.length - 1, Math.round(minutes / stepMinutes));
     updateReadouts({
       snapshot: state.timeline[index],
       depthReadout,
       timeReadout
     });
-  draw();
-}
+    draw();
+  }
 
   function setCurrentTime(minutes) {
     state.currentTime = clamp(minutes, 0, state.totalMinutes);
@@ -225,7 +226,7 @@ function updateFromTime(minutes) {
   }
 
   function setHoverPoint(point, index) {
-    state.hoverTime = point.t * state.totalMinutes;
+    state.hoverTime = point.timeFraction * state.totalMinutes;
     state.hoverIndex = index;
     updateFromTime(state.hoverTime);
   }
@@ -237,11 +238,11 @@ function updateFromTime(minutes) {
     draw();
   }
 
-  function getHoverPoint(x) {
+  function getHoverPoint(pointerX) {
     const width = canvas.clientWidth;
     if (!width) return null;
-    const t = clamp(x / width, 0, 1);
-    const { index } = quantizePoint({ t, depth: 0 });
+    const timeFraction = clamp(pointerX / width, 0, 1);
+    const { index } = quantizePoint({ timeFraction, depth: 0 });
     if (state.points[index]) {
       return { point: state.points[index], index };
     }
@@ -260,13 +261,13 @@ function updateFromTime(minutes) {
 
   function draw() {
     const profilePoints = normalizePoints(getActivePoints());
-    drawScene(ctx, canvas, state, profilePoints, state.timeline);
+    drawScene(canvasContext, canvas, state, profilePoints, state.timeline);
   }
 
   canvas.addEventListener("pointerdown", (event) => {
     state.drawing = true;
     canvas.setPointerCapture(event.pointerId);
-    const point = toProfile(event.offsetX, event.offsetY);
+    const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
     fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
     const hover = getHoverPoint(event.offsetX);
@@ -279,7 +280,7 @@ function updateFromTime(minutes) {
 
   canvas.addEventListener("pointermove", (event) => {
     if (state.drawing) {
-      const point = toProfile(event.offsetX, event.offsetY);
+      const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
       fillBetweenPoints(state.lastPoint, point);
       rebuildTimeline();
       const hover = getHoverPoint(event.offsetX);
@@ -301,7 +302,7 @@ function updateFromTime(minutes) {
   canvas.addEventListener("pointerup", (event) => {
     state.drawing = false;
     canvas.releasePointerCapture(event.pointerId);
-    const point = toProfile(event.offsetX, event.offsetY);
+    const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
     fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
     const hover = getHoverPoint(event.offsetX);
@@ -336,49 +337,59 @@ function updateFromTime(minutes) {
     rebuildTimeline();
   });
 
-  function updateGfDisplay() {
-    if (gfLowValue && gfLowInput) gfLowValue.textContent = String(gfLowInput.value);
-    if (gfHighValue && gfHighInput) gfHighValue.textContent = String(gfHighInput.value);
+  function updateGradientFactorDisplay() {
+    if (gradientFactorLowValue && gradientFactorLowInput) {
+      gradientFactorLowValue.textContent = String(gradientFactorLowInput.value);
+    }
+    if (gradientFactorHighValue && gradientFactorHighInput) {
+      gradientFactorHighValue.textContent = String(gradientFactorHighInput.value);
+    }
   }
 
-  function applyGf(inputEl, outputEl, key, fallback) {
-    if (!inputEl) return;
-    const raw = Number(inputEl.value);
+  function applyGradientFactor(inputElement, key, fallback) {
+    if (!inputElement) return;
+    const raw = Number(inputElement.value);
     const percent = clamp(Number.isFinite(raw) ? raw : fallback, 0, 100);
-    inputEl.value = String(percent);
+    inputElement.value = String(percent);
     state[key] = percent / 100;
-    if (gfLowInput && gfHighInput) {
-      const low = Number(gfLowInput.value);
-      const high = Number(gfHighInput.value);
+    if (gradientFactorLowInput && gradientFactorHighInput) {
+      const low = Number(gradientFactorLowInput.value);
+      const high = Number(gradientFactorHighInput.value);
       if (low > high) {
-        if (key === "gfLow") {
-          gfHighInput.value = String(low);
-          if (gfHighValue) gfHighValue.textContent = String(low);
-          state.gfHigh = low / 100;
+        if (key === "gradientFactorLow") {
+          gradientFactorHighInput.value = String(low);
+          if (gradientFactorHighValue) {
+            gradientFactorHighValue.textContent = String(low);
+          }
+          state.gradientFactorHigh = low / 100;
         } else {
-          gfLowInput.value = String(high);
-          if (gfLowValue) gfLowValue.textContent = String(high);
-          state.gfLow = high / 100;
+          gradientFactorLowInput.value = String(high);
+          if (gradientFactorLowValue) {
+            gradientFactorLowValue.textContent = String(high);
+          }
+          state.gradientFactorLow = high / 100;
         }
       }
     }
-    updateGfDisplay();
+    updateGradientFactorDisplay();
     rebuildTimeline();
   }
 
-  if (gfLowInput) {
-    const handler = () => applyGf(gfLowInput, gfLowValue, "gfLow", 30);
-    gfLowInput.addEventListener("input", handler);
-    gfLowInput.addEventListener("change", handler);
+  if (gradientFactorLowInput) {
+    const handler = () =>
+      applyGradientFactor(gradientFactorLowInput, "gradientFactorLow", 30);
+    gradientFactorLowInput.addEventListener("input", handler);
+    gradientFactorLowInput.addEventListener("change", handler);
   }
 
-  if (gfHighInput) {
-    const handler = () => applyGf(gfHighInput, gfHighValue, "gfHigh", 85);
-    gfHighInput.addEventListener("input", handler);
-    gfHighInput.addEventListener("change", handler);
+  if (gradientFactorHighInput) {
+    const handler = () =>
+      applyGradientFactor(gradientFactorHighInput, "gradientFactorHigh", 85);
+    gradientFactorHighInput.addEventListener("input", handler);
+    gradientFactorHighInput.addEventListener("change", handler);
   }
 
-  clearBtn.addEventListener("click", () => {
+  clearButton.addEventListener("click", () => {
     setFlatProfile();
     state.lastPoint = null;
     state.lastIndex = null;
@@ -393,7 +404,7 @@ function updateFromTime(minutes) {
   }
   resizeCanvas();
   setFlatProfile();
-  updateGfDisplay();
+  updateGradientFactorDisplay();
   updateAxes();
   rebuildTimeline();
   setCurrentTime(0);

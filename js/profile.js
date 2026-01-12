@@ -3,37 +3,42 @@
 
   function normalizePoints(points) {
     if (!points.length) {
-      return [{ t: 0, depth: 0 }, { t: 1, depth: 0 }];
+      return [{ timeFraction: 0, depth: 0 }, { timeFraction: 1, depth: 0 }];
     }
-    const sorted = [...points].sort((a, b) => a.t - b.t);
+    const sorted = [...points].sort(
+      (firstPoint, secondPoint) => firstPoint.timeFraction - secondPoint.timeFraction
+    );
     const deduped = [];
     for (const point of sorted) {
       const last = deduped[deduped.length - 1];
-      if (!last || point.t - last.t > 0.002) {
-        deduped.push({ t: point.t, depth: point.depth });
+      if (!last || point.timeFraction - last.timeFraction > 0.002) {
+        deduped.push({ timeFraction: point.timeFraction, depth: point.depth });
       } else {
         last.depth = point.depth;
       }
     }
-    if (deduped[0].t > 0) {
-      deduped.unshift({ t: 0, depth: deduped[0].depth });
+    if (deduped[0].timeFraction > 0) {
+      deduped.unshift({ timeFraction: 0, depth: deduped[0].depth });
     }
-    if (deduped[deduped.length - 1].t < 1) {
-      deduped.push({ t: 1, depth: deduped[deduped.length - 1].depth });
+    if (deduped[deduped.length - 1].timeFraction < 1) {
+      deduped.push({ timeFraction: 1, depth: deduped[deduped.length - 1].depth });
     }
     return deduped;
   }
 
-  function depthAt(minutes, totalMinutes, profilePoints) {
+  function getDepthAtTime(minutes, totalMinutes, profilePoints) {
     const total = totalMinutes || 1;
-    const t = Math.min(Math.max(minutes / total, 0), 1);
-    for (let i = 0; i < profilePoints.length - 1; i++) {
-      const a = profilePoints[i];
-      const b = profilePoints[i + 1];
-      if (t >= a.t && t <= b.t) {
-        const span = b.t - a.t || 1;
-        const mix = (t - a.t) / span;
-        return a.depth + (b.depth - a.depth) * mix;
+    const timeFraction = Math.min(Math.max(minutes / total, 0), 1);
+    for (let index = 0; index < profilePoints.length - 1; index++) {
+      const startPoint = profilePoints[index];
+      const endPoint = profilePoints[index + 1];
+      if (
+        timeFraction >= startPoint.timeFraction &&
+        timeFraction <= endPoint.timeFraction
+      ) {
+        const span = endPoint.timeFraction - startPoint.timeFraction || 1;
+        const mix = (timeFraction - startPoint.timeFraction) / span;
+        return startPoint.depth + (endPoint.depth - startPoint.depth) * mix;
       }
     }
     return profilePoints[profilePoints.length - 1].depth;
@@ -41,6 +46,6 @@
 
   window.DiveSim.profile = {
     normalizePoints,
-    depthAt
+    getDepthAtTime
   };
 })();

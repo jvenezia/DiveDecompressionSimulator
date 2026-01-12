@@ -1,47 +1,50 @@
 (() => {
   window.DiveSim = window.DiveSim || {};
 
-  const { BuhlmannModel, buildStops, tissueSaturation } = window.DiveSim.buhlmann;
-  const { normalizePoints, depthAt } = window.DiveSim.profile;
-  const { N2_FRACTION, WATER_VAPOR_PRESSURE } = window.DiveSim.constants;
+  const { BuhlmannModel, buildStops, calculateTissueSaturation } = window.DiveSim.buhlmann;
+  const { normalizePoints, getDepthAtTime } = window.DiveSim.profile;
+  const { NITROGEN_FRACTION, WATER_VAPOR_PRESSURE } = window.DiveSim.constants;
 
-  function lerp(a, b, t) {
-    return a + (b - a) * t;
+  function interpolateLinear(startValue, endValue, amount) {
+    return startValue + (endValue - startValue) * amount;
   }
 
   function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
   }
 
-  function buildTimeline({ points, totalMinutes, stepSec, gfLow, gfHigh }) {
+  function buildTimeline({ points, totalMinutes, stepSeconds, gradientFactorLow, gradientFactorHigh }) {
     const timeline = [];
     const model = new BuhlmannModel();
     const ceilingModel = new BuhlmannModel();
-    const stepMinutes = Math.max(5, stepSec) / 60;
+    const stepMinutes = Math.max(5, stepSeconds) / 60;
     const steps = Math.ceil(totalMinutes / stepMinutes);
     const profilePoints = normalizePoints(points);
     const lastNonZeroPoint = [...profilePoints].reverse().find((point) => point.depth > 0.1);
-    const lastNonZeroTime = lastNonZeroPoint ? lastNonZeroPoint.t * totalMinutes : 0;
-    const surfaceInspired = Math.max(0.0001, (1 - WATER_VAPOR_PRESSURE) * N2_FRACTION);
+    const lastNonZeroTime = lastNonZeroPoint ? lastNonZeroPoint.timeFraction * totalMinutes : 0;
+    const surfaceInspired = Math.max(
+      0.0001,
+      (1 - WATER_VAPOR_PRESSURE) * NITROGEN_FRACTION
+    );
     const maxProfileDepth = Math.max(...profilePoints.map((point) => point.depth));
     const maxInspired = Math.max(
       surfaceInspired + 0.0001,
-      (1 + maxProfileDepth / 10 - WATER_VAPOR_PRESSURE) * N2_FRACTION
+      (1 + maxProfileDepth / 10 - WATER_VAPOR_PRESSURE) * NITROGEN_FRACTION
     );
     const maxAmbient = 1 + maxProfileDepth / 10;
-    const low = Math.min(gfLow, gfHigh);
-    const high = Math.max(gfLow, gfHigh);
+    const low = Math.min(gradientFactorLow, gradientFactorHigh);
+    const high = Math.max(gradientFactorLow, gradientFactorHigh);
 
-    for (let i = 0; i <= steps; i++) {
-      const time = i * stepMinutes;
-      const depth = depthAt(time, totalMinutes, profilePoints);
+    for (let index = 0; index <= steps; index++) {
+      const time = index * stepMinutes;
+      const depth = getDepthAtTime(time, totalMinutes, profilePoints);
       const ambient = model.updateSegment(depth, stepMinutes);
       if (time <= lastNonZeroTime + stepMinutes * 0.5) {
         ceilingModel.updateSegment(depth, stepMinutes);
       }
       const fraction = maxAmbient > 1 ? (maxAmbient - ambient) / (maxAmbient - 1) : 1;
-      const gf = lerp(low, high, clamp(fraction, 0, 1));
-      const ceilingAmbient = ceilingModel.getCeiling(gf);
+      const gradientFactor = interpolateLinear(low, high, clamp(fraction, 0, 1));
+      const ceilingAmbient = ceilingModel.getCeiling(gradientFactor);
       const ceilingMeters = Math.max(0, (ceilingAmbient - 1) * 10);
       const pressures = model.getTissues();
       const maxPressure = Math.max(...pressures);
@@ -53,7 +56,7 @@
       timeline.push({
         time,
         depth,
-        tissues: tissueSaturation(pressures, ambient),
+        tissues: calculateTissueSaturation(pressures, ambient),
         stops: buildStops(ceilingMeters),
         ceiling: ceilingMeters,
         saturation

@@ -1,17 +1,17 @@
 (() => {
   window.DiveSim = window.DiveSim || {};
 
-  const { COMPARTMENTS, N2_FRACTION, WATER_VAPOR_PRESSURE } = window.DiveSim.constants;
+  const { COMPARTMENTS, NITROGEN_FRACTION, WATER_VAPOR_PRESSURE } = window.DiveSim.constants;
 
-  const LN2 = Math.log(2);
+  const LOG_OF_TWO = Math.log(2);
 
-  function inspiredN2(ambientPressure) {
-    return Math.max(0, (ambientPressure - WATER_VAPOR_PRESSURE) * N2_FRACTION);
+  function calculateInspiredNitrogenPressure(ambientPressure) {
+    return Math.max(0, (ambientPressure - WATER_VAPOR_PRESSURE) * NITROGEN_FRACTION);
   }
 
   class BuhlmannModel {
     constructor() {
-      const surface = inspiredN2(1.0);
+      const surface = calculateInspiredNitrogenPressure(1.0);
       this.compartments = COMPARTMENTS.map((compartment) => ({
         ...compartment,
         pressure: surface
@@ -20,10 +20,11 @@
 
     updateSegment(depthMeters, minutes) {
       const ambient = 1 + depthMeters / 10;
-      const inspired = inspiredN2(ambient);
+      const inspired = calculateInspiredNitrogenPressure(ambient);
       this.compartments.forEach((compartment) => {
-        const k = LN2 / compartment.halfTime;
-        compartment.pressure = inspired + (compartment.pressure - inspired) * Math.exp(-k * minutes);
+        const decayConstant = LOG_OF_TWO / compartment.halfTime;
+        compartment.pressure =
+          inspired + (compartment.pressure - inspired) * Math.exp(-decayConstant * minutes);
       });
       return ambient;
     }
@@ -32,15 +33,16 @@
       return this.compartments.map((compartment) => compartment.pressure);
     }
 
-    getCeiling(gf) {
+    getCeiling(gradientFactor) {
       let maxAmbient = 1.0;
       this.compartments.forEach((compartment) => {
-        // Buhlmann M-line uses P_amb = (P_t - a) * b, so GF uses 1/b in the slope.
-        const denominator = gf / compartment.b + (1 - gf);
+        const denominator =
+          gradientFactor / compartment.bCoefficient + (1 - gradientFactor);
         if (denominator <= 0) {
           return;
         }
-        const ambient = (compartment.pressure - gf * compartment.a) / denominator;
+        const ambient =
+          (compartment.pressure - gradientFactor * compartment.aCoefficient) / denominator;
         if (ambient > maxAmbient) {
           maxAmbient = ambient;
         }
@@ -49,8 +51,8 @@
     }
   }
 
-  function tissueSaturation(pressures, ambientPressure) {
-    const inspired = inspiredN2(ambientPressure) || 0.0001;
+  function calculateTissueSaturation(pressures, ambientPressure) {
+    const inspired = calculateInspiredNitrogenPressure(ambientPressure) || 0.0001;
     return pressures.map((pressure) => ({
       saturation: pressure / inspired
     }));
@@ -66,7 +68,7 @@
 
   window.DiveSim.buhlmann = {
     BuhlmannModel,
-    tissueSaturation,
+    calculateTissueSaturation,
     buildStops
   };
 })();

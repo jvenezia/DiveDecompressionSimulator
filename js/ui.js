@@ -7,128 +7,128 @@
 
   function formatTime(minutes) {
     const totalSeconds = Math.max(0, Math.round(minutes * 60));
-    const m = Math.floor(totalSeconds / 60);
-    const s = totalSeconds % 60;
-    return `${m}:${String(s).padStart(2, "0")}`;
+    const minutesPart = Math.floor(totalSeconds / 60);
+    const secondsPart = totalSeconds % 60;
+    return `${minutesPart}:${String(secondsPart).padStart(2, "0")}`;
   }
 
-  function drawScene(ctx, canvas, state, profilePoints, timeline) {
+  function drawScene(canvasContext, canvas, state, profilePoints, timeline) {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
-    ctx.clearRect(0, 0, width, height);
+    canvasContext.clearRect(0, 0, width, height);
 
-    ctx.save();
-    ctx.strokeStyle = "rgba(16, 36, 58, 0.08)";
-    ctx.lineWidth = 1;
-    const gridY = 6;
-    const gridX = 8;
-    for (let i = 1; i < gridY; i++) {
-      const y = (i / gridY) * height;
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
+    canvasContext.save();
+    canvasContext.strokeStyle = "rgba(16, 36, 58, 0.08)";
+    canvasContext.lineWidth = 1;
+    const gridRows = 6;
+    const gridColumns = 8;
+    for (let index = 1; index < gridRows; index++) {
+      const yPosition = (index / gridRows) * height;
+      canvasContext.beginPath();
+      canvasContext.moveTo(0, yPosition);
+      canvasContext.lineTo(width, yPosition);
+      canvasContext.stroke();
     }
-    for (let i = 1; i < gridX; i++) {
-      const x = (i / gridX) * width;
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
+    for (let index = 1; index < gridColumns; index++) {
+      const xPosition = (index / gridColumns) * width;
+      canvasContext.beginPath();
+      canvasContext.moveTo(xPosition, 0);
+      canvasContext.lineTo(xPosition, height);
+      canvasContext.stroke();
     }
-    ctx.restore();
+    canvasContext.restore();
 
     if (timeline && timeline.length > 1) {
       const maxSaturation = 1;
-      ctx.save();
-      const gradient = ctx.createLinearGradient(0, height, 0, 0);
+      canvasContext.save();
+      const gradient = canvasContext.createLinearGradient(0, height, 0, 0);
       gradient.addColorStop(0, "rgba(34, 197, 94, 0.8)");
       gradient.addColorStop(1, "rgba(239, 68, 68, 0.8)");
-      ctx.strokeStyle = gradient;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
+      canvasContext.strokeStyle = gradient;
+      canvasContext.lineWidth = 2;
+      canvasContext.beginPath();
       timeline.forEach((point, index) => {
-        const x = (point.time / state.totalMinutes) * width;
-        const y = height - clamp(point.saturation / maxSaturation, 0, 1) * height;
+        const xPosition = (point.time / state.totalMinutes) * width;
+        const yPosition = height - clamp(point.saturation / maxSaturation, 0, 1) * height;
         if (index === 0) {
-          ctx.moveTo(x, y);
+          canvasContext.moveTo(xPosition, yPosition);
         } else {
-          ctx.lineTo(x, y);
+          canvasContext.lineTo(xPosition, yPosition);
         }
       });
-      ctx.stroke();
+      canvasContext.stroke();
 
-      ctx.restore();
+      canvasContext.restore();
     }
 
     if (timeline && timeline.length > 1) {
-      ctx.save();
-      ctx.strokeStyle = "rgba(51, 65, 85, 0.6)";
-      ctx.lineWidth = 2;
-      ctx.setLineDash([6, 6]);
-      ctx.beginPath();
+      canvasContext.save();
+      canvasContext.strokeStyle = "rgba(51, 65, 85, 0.6)";
+      canvasContext.lineWidth = 2;
+      canvasContext.setLineDash([6, 6]);
+      canvasContext.beginPath();
       timeline.forEach((point, index) => {
         const ceiling = Number.isFinite(point.ceiling) ? point.ceiling : 0;
-        const x = (point.time / state.totalMinutes) * width;
-        const y = (ceiling / state.maxDepth) * height;
+        const xPosition = (point.time / state.totalMinutes) * width;
+        const yPosition = (ceiling / state.maxDepth) * height;
         if (index === 0) {
-          ctx.moveTo(x, y);
+          canvasContext.moveTo(xPosition, yPosition);
         } else {
-          ctx.lineTo(x, y);
+          canvasContext.lineTo(xPosition, yPosition);
         }
       });
-      ctx.stroke();
-      ctx.restore();
+      canvasContext.stroke();
+      canvasContext.restore();
     }
 
-    ctx.beginPath();
+    canvasContext.beginPath();
     profilePoints.forEach((point, index) => {
-      const x = point.t * width;
-      const y = (point.depth / state.maxDepth) * height;
+      const xPosition = point.timeFraction * width;
+      const yPosition = (point.depth / state.maxDepth) * height;
       if (index === 0) {
-        ctx.moveTo(x, y);
+        canvasContext.moveTo(xPosition, yPosition);
       } else {
-        ctx.lineTo(x, y);
+        canvasContext.lineTo(xPosition, yPosition);
       }
     });
-    ctx.strokeStyle = "#2563eb";
-    ctx.lineWidth = 3;
-    ctx.stroke();
+    canvasContext.strokeStyle = "#2563eb";
+    canvasContext.lineWidth = 3;
+    canvasContext.stroke();
 
     if (state.points.length) {
-      ctx.fillStyle = "rgba(37, 99, 235, 0.85)";
+      canvasContext.fillStyle = "rgba(37, 99, 235, 0.85)";
       state.points.forEach((point) => {
-        const x = point.t * width;
-        const y = (point.depth / state.maxDepth) * height;
-        ctx.beginPath();
-        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-        ctx.fill();
+        const xPosition = point.timeFraction * width;
+        const yPosition = (point.depth / state.maxDepth) * height;
+        canvasContext.beginPath();
+        canvasContext.arc(xPosition, yPosition, 3.5, 0, Math.PI * 2);
+        canvasContext.fill();
       });
     }
 
     if (Number.isFinite(state.hoverTime)) {
       const cursorX = (state.hoverTime / state.totalMinutes) * width;
-      ctx.beginPath();
-      ctx.moveTo(cursorX, 0);
-      ctx.lineTo(cursorX, height);
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.6)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      canvasContext.beginPath();
+      canvasContext.moveTo(cursorX, 0);
+      canvasContext.lineTo(cursorX, height);
+      canvasContext.strokeStyle = "rgba(148, 163, 184, 0.6)";
+      canvasContext.lineWidth = 2;
+      canvasContext.stroke();
     }
 
     if (Number.isInteger(state.hoverIndex) && state.points[state.hoverIndex]) {
       const hoverPoint = state.points[state.hoverIndex];
-      const hx = hoverPoint.t * width;
-      const hy = (hoverPoint.depth / state.maxDepth) * height;
-      ctx.beginPath();
-      ctx.arc(hx, hy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(37, 99, 235, 0.9)";
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(hx, hy, 9, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(37, 99, 235, 0.25)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      const hoverX = hoverPoint.timeFraction * width;
+      const hoverY = (hoverPoint.depth / state.maxDepth) * height;
+      canvasContext.beginPath();
+      canvasContext.arc(hoverX, hoverY, 6, 0, Math.PI * 2);
+      canvasContext.fillStyle = "rgba(37, 99, 235, 0.9)";
+      canvasContext.fill();
+      canvasContext.beginPath();
+      canvasContext.arc(hoverX, hoverY, 9, 0, Math.PI * 2);
+      canvasContext.strokeStyle = "rgba(37, 99, 235, 0.25)";
+      canvasContext.lineWidth = 2;
+      canvasContext.stroke();
     }
   }
 
