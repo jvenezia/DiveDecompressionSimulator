@@ -13,8 +13,8 @@
             "This tool is for educational purposes only. It must not be used for real dive planning. It may contain mistakes, is based on approximations, and was not tested for real diving."
         },
         labels: {
-          metres: "metres",
-          saturation: "saturation %",
+          metres: "meters",
+          saturation: "saturation (%)",
           minutes: "minutes"
         },
         inputs: {
@@ -27,8 +27,13 @@
           clear: "Clear"
         },
         info: {
-          body:
-            "The simulator assumes air (21% O<sub>2</sub> / 79% N<sub>2</sub>).<br><br>The green-to-red line shows relative saturation over time (higher value means more saturation).<br><br>The dashed ceiling line is the shallowest (nearest-to-surface depth) you're allowed to be at right now based on tissue loading and GF settings. If you go above it (closer to the surface), decompression stops are required before you can ascend further.<br><br>GF Low applies at depth and GF High applies near the surface, with values blended between them during ascent. Lower GF values make the ceiling deeper (more conservative); higher values let the ceiling sit closer to the surface."
+          line1: "The simulator assumes air (21% O<sub>2</sub> / 79% N<sub>2</sub>).",
+          line2:
+            "The green-to-red line shows relative saturation over time (higher value means more saturation).",
+          line3:
+            "The dashed ceiling line is the shallowest (nearest-to-surface depth) you're allowed to be at right now based on tissue loading and GF settings. If you go above it (closer to the surface), decompression stops are required before you can ascend further.",
+          line4:
+            "GF Low applies at depth and GF High applies near the surface, with values blended between them during ascent. Lower GF values make the ceiling deeper (more conservative); higher values let the ceiling sit closer to the surface."
         },
         language: {
           label: "Language",
@@ -45,7 +50,7 @@
         app: {
           title: "Simulateur de désaturation en plongée",
           subtitle:
-            "Esquissez un profil de profondeur pour voir la saturation des tissus et les paliers de décompression en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C."
+            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de décompression en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C."
         },
         caution: {
           title: "Utiliser avec prudence",
@@ -54,7 +59,7 @@
         },
         labels: {
           metres: "mètres",
-          saturation: "saturation %",
+          saturation: "saturation (%)",
           minutes: "minutes"
         },
         inputs: {
@@ -67,8 +72,13 @@
           clear: "Effacer"
         },
         info: {
-          body:
-            "Le simulateur suppose de l'air (21% O<sub>2</sub> / 79% N<sub>2</sub>).<br><br>La ligne verte à rouge indique la saturation relative dans le temps (valeur plus élevée = plus de saturation).<br><br>La ligne de plafond en pointillés représente la profondeur la plus faible (la plus proche de la surface) autorisée actuellement selon la charge tissulaire et les réglages GF. Si vous la dépassez (plus près de la surface), des paliers de décompression sont requis avant de pouvoir remonter davantage.<br><br>GF Bas s'applique en profondeur et GF Haut près de la surface, avec des valeurs interpolées entre les deux lors de la remontée. Des GF plus bas rendent le plafond plus profond (plus conservateur) ; des GF plus élevés le rapprochent de la surface."
+          line1: "Le simulateur suppose de l'air (21% O<sub>2</sub> / 79% N<sub>2</sub>).",
+          line2:
+            "La ligne verte à rouge indique la saturation relative dans le temps (valeur plus élevée = plus de saturation).",
+          line3:
+            "La ligne de plafond en pointillés représente la profondeur la plus faible (la plus proche de la surface) autorisée actuellement selon la charge tissulaire et les réglages GF. Si vous la dépassez (plus près de la surface), des paliers de décompression sont requis avant de pouvoir remonter davantage.",
+          line4:
+            "GF Bas s'applique en profondeur et GF Haut près de la surface, avec des valeurs interpolées entre les deux lors de la remontée. Des GF plus bas rendent le plafond plus profond (plus conservateur) ; des GF plus élevés le rapprochent de la surface."
         },
         language: {
           label: "Langue",
