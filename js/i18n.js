@@ -49,7 +49,7 @@
           line4:
             "The horizontal red lines indicate the recommended stops. They are derived from the red zone to avoid ever exceeding it.",
           line5:
-            "GF Low applies at depth. The lower the value, the deeper the stops begin.<br>GF High applies near the surface. The lower the value, the longer the stops last.<br>Lower GF values make stops deeper and longer, which is more conservative. 100% is the least conservative."
+            "<b>GF Low</b> applies at depth. The lower the value, the deeper the stops begin.<br><b>GF High</b> applies near the surface. The lower the value, the longer the stops last.<br>Lower GF values make stops deeper and longer, which is more conservative. 100% is the least conservative."
         },
         language: {
           label: "Language",
@@ -116,7 +116,7 @@
           line4:
             "Les lignes rouges horizontales indiquent les paliers recommandés. Ils sont déduits de la zone rouge, afin de ne jamais la dépasser.",
           line5:
-            "GF Bas agit en profondeur. Plus la valeur est faible, plus les paliers commenceront profonds.<br>GF Haut agit près de la surface. Plus la valeur est faible, plus les paliers dureront longtemps.<br>Des GF plus bas rendent les paliers plus profonds et plus longs, donc plus conservateurs. 100 % est le moins conservateur."
+            "<b>GF Bas</b> agit en profondeur. Plus la valeur est faible, plus les paliers commenceront profonds.<br><b>GF Haut</b> agit près de la surface. Plus la valeur est faible, plus les paliers dureront longtemps.<br>Des GF plus bas rendent les paliers plus profonds et plus longs, donc plus conservateurs. 100% est le moins conservateur."
         },
         language: {
           label: "Langue",

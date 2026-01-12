@@ -159,9 +159,36 @@
         </div>
         <div class="mt-auto space-y-4 text-xs leading-relaxed text-slate-500">
           <p data-i18n="info.line1" data-i18n-html="true"></p>
-          <p data-i18n="info.line2" data-i18n-html="true"></p>
-          <p data-i18n="info.line3" data-i18n-html="true"></p>
-          <p data-i18n="info.line4" data-i18n-html="true"></p>
+          <p class="flex items-start gap-2">
+            <span class="mt-0.5 inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
+              <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                <defs>
+                  <linearGradient id="info-sat-line" x1="1" y1="8" x2="15" y2="8" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#22c55e"/>
+                    <stop offset="1" stop-color="#ef4444"/>
+                  </linearGradient>
+                </defs>
+                <path d="M1 8H15" stroke="url(#info-sat-line)" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span data-i18n="info.line2" data-i18n-html="true"></span>
+          </p>
+          <p class="flex items-start gap-2">
+            <span class="mt-0.5 inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
+              <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                <rect x="2" y="3" width="12" height="10" rx="2" fill="#fecaca"/>
+              </svg>
+            </span>
+            <span data-i18n="info.line3" data-i18n-html="true"></span>
+          </p>
+          <p class="flex items-start gap-2">
+            <span class="mt-0.5 inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
+              <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                <path d="M2 8H14" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span data-i18n="info.line4" data-i18n-html="true"></span>
+          </p>
           <p data-i18n="info.line5" data-i18n-html="true"></p>
         </div>
       </div>
