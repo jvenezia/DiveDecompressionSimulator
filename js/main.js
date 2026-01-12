@@ -19,8 +19,10 @@ const recalcBtn = document.getElementById("recalc-btn");
 
   const state = {
     points: [],
-  drawing: false,
-  totalMinutes: Number(totalTimeInput.value),
+    drawing: false,
+    lastPoint: null,
+    lastIndex: null,
+    totalMinutes: Number(totalTimeInput.value),
   maxDepth: Number(maxDepthInput.value),
   stepSec: Number(stepSizeInput.value),
   timeline: [],
@@ -76,6 +78,28 @@ function resizeCanvas() {
   function addPoint(point) {
     const { index, t, depth } = quantizePoint(point);
     state.points[index] = { t, depth };
+    state.lastPoint = { t, depth };
+    state.lastIndex = index;
+  }
+
+  function fillBetweenPoints(fromPoint, toPoint) {
+    if (!fromPoint || !toPoint) {
+      addPoint(toPoint);
+      return;
+    }
+    const from = quantizePoint(fromPoint);
+    const to = quantizePoint(toPoint);
+    const start = Math.min(from.index, to.index);
+    const end = Math.max(from.index, to.index);
+    const span = Math.max(1, end - start);
+    for (let i = start; i <= end; i++) {
+      const mix = (i - start) / span;
+      const depth = from.depth + (to.depth - from.depth) * mix;
+      const t = i / getStepCount();
+      state.points[i] = { t, depth };
+    }
+    state.lastPoint = { t: to.t, depth: to.depth };
+    state.lastIndex = to.index;
   }
 
   function rebuildTimeline() {
@@ -117,36 +141,39 @@ function setCurrentTime(minutes) {
   }
 
   canvas.addEventListener("pointerdown", (event) => {
-  state.drawing = true;
-  canvas.setPointerCapture(event.pointerId);
+    state.drawing = true;
+    canvas.setPointerCapture(event.pointerId);
     const point = toProfile(event.offsetX, event.offsetY);
     const bucketed = quantizePoint(point);
-    addPoint(point);
+    fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
     setCurrentTime(bucketed.t * state.totalMinutes);
   });
 
   canvas.addEventListener("pointermove", (event) => {
-  if (!state.drawing) return;
+    if (!state.drawing) return;
     const point = toProfile(event.offsetX, event.offsetY);
     const bucketed = quantizePoint(point);
-    addPoint(point);
+    fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
     setCurrentTime(bucketed.t * state.totalMinutes);
   });
 
   canvas.addEventListener("pointerup", (event) => {
-  state.drawing = false;
-  canvas.releasePointerCapture(event.pointerId);
+    state.drawing = false;
+    canvas.releasePointerCapture(event.pointerId);
     const point = toProfile(event.offsetX, event.offsetY);
     const bucketed = quantizePoint(point);
+    fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
     setCurrentTime(bucketed.t * state.totalMinutes);
   });
 
-canvas.addEventListener("pointerleave", () => {
-  state.drawing = false;
-});
+  canvas.addEventListener("pointerleave", () => {
+    state.drawing = false;
+    state.lastPoint = null;
+    state.lastIndex = null;
+  });
 
   totalTimeInput.addEventListener("change", () => {
     state.totalMinutes = clamp(Number(totalTimeInput.value) || 40, 5, 180);
@@ -169,11 +196,13 @@ maxDepthInput.addEventListener("change", () => {
     rebuildTimeline();
   });
 
-clearBtn.addEventListener("click", () => {
-  state.points = [];
-  rebuildTimeline();
-  setCurrentTime(0);
-});
+  clearBtn.addEventListener("click", () => {
+    state.points = [];
+    state.lastPoint = null;
+    state.lastIndex = null;
+    rebuildTimeline();
+    setCurrentTime(0);
+  });
 recalcBtn.addEventListener("click", rebuildTimeline);
 
 window.addEventListener("resize", resizeCanvas);
