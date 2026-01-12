@@ -246,7 +246,6 @@ function setCurrentTime(minutes) {
     const raw = Number(inputEl.value);
     const percent = clamp(Number.isFinite(raw) ? raw : fallback, 0, 100);
     inputEl.value = String(percent);
-    if (outputEl) outputEl.textContent = String(percent);
     state[key] = percent / 100;
     if (gfLowInput && gfHighInput) {
       const low = Number(gfLowInput.value);
@@ -263,6 +262,7 @@ function setCurrentTime(minutes) {
         }
       }
     }
+    updateGfDisplay();
     rebuildTimeline();
   }
 
