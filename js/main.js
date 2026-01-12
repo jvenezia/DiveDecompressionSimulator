@@ -46,12 +46,15 @@
     draw();
   }
 
-  function renderAxis(axisEl, labels) {
+  function renderAxis(axisEl, labels, styleForIndex) {
     if (!axisEl) return;
     axisEl.innerHTML = "";
-    labels.forEach((label) => {
+    labels.forEach((label, index) => {
       const span = document.createElement("span");
       span.textContent = label;
+      if (styleForIndex) {
+        Object.assign(span.style, styleForIndex(index, labels.length));
+      }
       axisEl.appendChild(span);
     });
   }
@@ -62,23 +65,31 @@
     const depthLabels = [];
     for (let i = 0; i <= gridY; i++) {
       const depthValue = (i / gridY) * state.maxDepth;
-      depthLabels.push(`${depthValue.toFixed(0)} m`);
+      depthLabels.push(depthValue.toFixed(0));
     }
     renderAxis(depthAxis, depthLabels);
 
     const timeLabels = [];
     for (let i = 0; i <= gridX; i++) {
       const timeValue = (i / gridX) * state.totalMinutes;
-      timeLabels.push(`${timeValue.toFixed(0)} min`);
+      timeLabels.push(timeValue.toFixed(0));
     }
     renderAxis(timeAxis, timeLabels);
 
     const satLabels = [];
     for (let i = 0; i <= gridY; i++) {
       const value = ((gridY - i) / gridY) * 100;
-      satLabels.push(`${value.toFixed(0)}%`);
+      satLabels.push(value.toFixed(0));
     }
-    renderAxis(satAxis, satLabels);
+    const red = [239, 68, 68];
+    const green = [34, 197, 94];
+    renderAxis(satAxis, satLabels, (index, length) => {
+      const t = length > 1 ? index / (length - 1) : 0;
+      const channel = (a, b) => Math.round(a + (b - a) * t);
+      return {
+        color: `rgb(${channel(red[0], green[0])}, ${channel(red[1], green[1])}, ${channel(red[2], green[2])})`
+      };
+    });
   }
 
   function toProfile(x, y) {

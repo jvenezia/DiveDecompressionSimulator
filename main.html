@@ -44,20 +44,28 @@
     <section class="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
       <div class="rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
           <div class="grid gap-5">
-            <div class="grid gap-3 md:grid-cols-[auto_1fr_auto] md:items-stretch">
+            <div class="grid gap-2 md:grid-cols-[auto_1fr_auto] md:items-center">
+              <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">metres</div>
+              <div></div>
+              <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 text-right whitespace-nowrap">saturation %</div>
+            </div>
+            <div class="grid gap-2 md:grid-cols-[auto_1fr_auto] md:items-stretch">
               <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500" id="depth-axis"></div>
               <div id="profile-shell" class="relative h-[42vh] min-h-[320px] max-h-[420px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200">
               <canvas id="profile" class="block h-full w-full"></canvas>
-            <div class="absolute bottom-4 right-4 flex items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600">
+              <div class="absolute bottom-4 right-4 flex items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600">
                 <span id="depth-readout">0 m</span>
                 <span id="time-readout">0:00</span>
               </div>
             </div>
             <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500 text-right" id="sat-axis"></div>
           </div>
-          <div class="grid gap-3 md:grid-cols-[auto_1fr_auto] md:items-center">
+          <div class="grid gap-2 md:grid-cols-[auto_1fr_auto] md:items-center">
             <div></div>
-            <div class="flex justify-between text-xs font-mono text-slate-500" id="time-axis"></div>
+            <div class="flex flex-col gap-1">
+              <div class="flex w-full justify-between text-xs font-mono text-slate-500" id="time-axis"></div>
+              <div class="self-end text-[10px] font-semibold uppercase tracking-wide text-slate-500">minutes</div>
+            </div>
             <div></div>
           </div>
 
@@ -89,7 +97,7 @@
             </div>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button class="rounded-full border border-slate-200 bg-white/90 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:shadow-lg" id="clear-btn">Clear sketch</button>
+            <button class="rounded-full border border-slate-200 bg-white/90 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:shadow-lg" id="clear-btn">Clear</button>
           </div>
         </div>
         </div>
@@ -98,7 +106,8 @@
       <div class="flex h-full flex-col gap-3 rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
         <p class="mt-auto text-xs leading-relaxed text-slate-500">
           The simulator assumes air (21% O<sub>2</sub> / 79% N<sub>2</sub>).
-          The green-to-red line shows relative saturation over time (higher value = more saturation).
+          <br><br>
+          The green-to-red line shows relative saturation over time (higher value means more saturation).
           <br><br>
           The dashed ceiling line is the shallowest (nearest-to-surface depth) you're allowed to be at right now based on tissue loading and GF settings.
           If you go above it (closer to the surface), decompression stops are required before you can ascend further.
