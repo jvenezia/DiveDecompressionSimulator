@@ -1,5 +1,7 @@
 # Dive Decompression Simulator
 
+https://jvenezia.github.io/DiveDecompressionSimulator/
+
 Dive Decompression Simulator visualizes a drawn dive profile and shows estimated tissue saturation
 along with a decompression ceiling based on a compact Buhlmann ZHL-16C model.
 
@@ -9,9 +11,7 @@ along with a decompression ceiling based on a compact Buhlmann ZHL-16C model.
 - View saturation and ceiling overlays while you sketch.
 
 ## Run Locally
-1. Open `main.html` in a browser.
-2. Draw a profile in the canvas area.
-3. Adjust the inputs to explore different scenarios.
+Open `index.html` in a browser.
 
 ## Notes
 - The simulator assumes air (21% O2 / 79% N2).
