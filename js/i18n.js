@@ -31,7 +31,7 @@
           line2:
             "The green-to-red line shows relative saturation over time (higher value means more saturation).",
           line3:
-            "The dashed ceiling line is the shallowest (nearest-to-surface depth) you're allowed to be at right now based on tissue loading and GF settings. If you go above it (closer to the surface), decompression stops are required before you can ascend further.",
+            "The red ceiling zone marks the shallowest (nearest-to-surface depth) you're allowed to be at right now based on tissue loading and GF settings. If you enter that zone (closer to the surface), decompression stops are required before you can ascend further.",
           line4:
             "GF Low applies at depth and GF High applies near the surface, with values blended between them during ascent. Lower GF values make the ceiling deeper (more conservative); higher values let the ceiling sit closer to the surface."
         },
@@ -82,7 +82,7 @@
           line2:
             "La ligne verte à rouge indique la saturation relative dans le temps (valeur plus élevée = plus de saturation).",
           line3:
-            "La ligne de plafond en pointillés représente la profondeur la plus faible (la plus proche de la surface) autorisée actuellement selon la charge tissulaire et les réglages GF. Si vous la dépassez (plus près de la surface), des paliers de décompression sont requis avant de pouvoir remonter davantage.",
+            "La zone rouge du plafond indique la profondeur la plus faible (la plus proche de la surface) autorisée actuellement selon la charge tissulaire et les réglages GF. Si vous y entrez (plus près de la surface), des paliers de décompression sont requis avant de pouvoir remonter davantage.",
           line4:
             "GF Bas s'applique en profondeur et GF Haut près de la surface, avec des valeurs interpolées entre les deux lors de la remontée. Des GF plus bas rendent le plafond plus profond (plus conservateur) ; des GF plus élevés le rapprochent de la surface."
         },

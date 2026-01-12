@@ -70,9 +70,26 @@
 
     if (timeline && timeline.length > 1) {
       canvasContext.save();
-      canvasContext.strokeStyle = "rgba(51, 65, 85, 0.6)";
-      canvasContext.lineWidth = 2;
-      canvasContext.setLineDash([6, 6]);
+      let firstXPosition = 0;
+      let lastXPosition = 0;
+      canvasContext.beginPath();
+      timeline.forEach((point, index) => {
+        const ceiling = Number.isFinite(point.ceiling) ? point.ceiling : 0;
+        const xPosition = (point.time / state.totalMinutes) * width;
+        const yPosition = (ceiling / state.maxDepth) * height;
+        if (index === 0) {
+          firstXPosition = xPosition;
+          canvasContext.moveTo(xPosition, yPosition);
+        } else {
+          canvasContext.lineTo(xPosition, yPosition);
+        }
+        lastXPosition = xPosition;
+      });
+      canvasContext.lineTo(lastXPosition, 0);
+      canvasContext.lineTo(firstXPosition, 0);
+      canvasContext.closePath();
+      canvasContext.fillStyle = "rgba(239, 68, 68, 0.2)";
+      canvasContext.fill();
       canvasContext.beginPath();
       timeline.forEach((point, index) => {
         const ceiling = Number.isFinite(point.ceiling) ? point.ceiling : 0;
@@ -84,6 +101,8 @@
           canvasContext.lineTo(xPosition, yPosition);
         }
       });
+      canvasContext.strokeStyle = "rgba(239, 68, 68, 0.65)";
+      canvasContext.lineWidth = 2;
       canvasContext.stroke();
       canvasContext.restore();
     }
