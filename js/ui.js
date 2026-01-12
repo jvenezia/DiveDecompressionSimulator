@@ -67,19 +67,12 @@
       ctx.lineWidth = 2;
       ctx.setLineDash([6, 6]);
       ctx.beginPath();
-      let hasSegment = false;
-      timeline.forEach((point) => {
-        const stops = point.stops || [];
-        if (!stops.length) {
-          hasSegment = false;
-          return;
-        }
-        const stopDepth = Math.max(...stops.map((stop) => stop.depth));
+      timeline.forEach((point, index) => {
+        const ceiling = Number.isFinite(point.ceiling) ? point.ceiling : 0;
         const x = (point.time / state.totalMinutes) * width;
-        const y = (stopDepth / state.maxDepth) * height;
-        if (!hasSegment) {
+        const y = (ceiling / state.maxDepth) * height;
+        if (index === 0) {
           ctx.moveTo(x, y);
-          hasSegment = true;
         } else {
           ctx.lineTo(x, y);
         }
@@ -122,43 +115,13 @@
     ctx.stroke();
   }
 
-  function updateReadouts({ snapshot, depthReadout, timeReadout, stopsList, timeline }) {
+  function updateReadouts({ snapshot, depthReadout, timeReadout }) {
     if (!snapshot) {
       return;
     }
     const depth = snapshot.depth || 0;
     depthReadout.textContent = `${depth.toFixed(1)} m`;
     timeReadout.textContent = formatTime(snapshot.time);
-    stopsList.innerHTML = "";
-    const stopTotals = new Map();
-    const series = timeline || [];
-    for (let i = 0; i < series.length - 1; i++) {
-      const point = series[i];
-      const next = series[i + 1];
-      const stops = point.stops || [];
-      if (!stops.length) continue;
-      const delta = Math.max(0, (next.time || 0) - (point.time || 0));
-      stops.forEach((stop) => {
-        if (stop.depth === undefined) return;
-        const key = Number(stop.depth).toFixed(1);
-        stopTotals.set(key, (stopTotals.get(key) || 0) + delta);
-      });
-    }
-
-    if (!stopTotals.size) {
-      stopsList.textContent = "Clear ascent";
-    } else {
-      Array.from(stopTotals.entries())
-        .map(([depth, minutes]) => ({ depth: Number(depth), minutes }))
-        .sort((a, b) => b.depth - a.depth)
-        .forEach(({ depth, minutes }) => {
-          const el = document.createElement("div");
-          el.className = "stop-pill";
-          el.textContent = `${depth.toFixed(1)} m · ${formatTime(minutes)}`;
-          stopsList.appendChild(el);
-        });
-    }
-
   }
 
   window.DiveSim.ui = {

@@ -65,7 +65,7 @@
           <div class="grid gap-3 md:grid-cols-2">
             <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3">
               <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="total-time">Total time (min)</label>
-              <input class="mt-2 w-full border-none bg-transparent text-lg font-mono text-slate-900 focus:outline-none" type="number" id="total-time" min="5" max="180" value="90" />
+              <input class="mt-2 w-full border-none bg-transparent text-lg font-mono text-slate-900 focus:outline-none" type="number" id="total-time" min="5" max="180" value="60" />
             </div>
             <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3">
               <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="max-depth">Max depth (m)</label>
@@ -95,15 +95,13 @@
         </div>
       </div>
 
-      <div class="rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
-        <div class="space-y-3">
-          <strong class="text-base text-slate-800">Stops</strong>
-          <div class="grid gap-2 text-sm text-slate-600" id="stops-list"></div>
-        </div>
-
-        <p class="mt-6 text-xs leading-relaxed text-slate-500">
-          Draw a single profile left-to-right. The simulator assumes air (21% O<sub>2</sub> / 79% N<sub>2</sub>).
-          The orange line shows relative saturation vs time (higher line = more load).
+      <div class="flex h-full flex-col gap-3 rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
+        <p class="mt-auto text-xs leading-relaxed text-slate-500">
+          The simulator assumes air (21% O<sub>2</sub> / 79% N<sub>2</sub>).
+          The green-to-red line shows relative saturation over time (higher value = more saturation).
+          <br><br>
+          The dashed ceiling line is the shallowest safe depth at that moment based on tissue loading and GF settings.
+          If you are shallower than it, decompression stops are required before you can ascend further.
         </p>
       </div>
     </section>

@@ -10,7 +10,6 @@
   const depthAxis = document.getElementById("depth-axis");
   const timeAxis = document.getElementById("time-axis");
   const satAxis = document.getElementById("sat-axis");
-  const stopsList = document.getElementById("stops-list");
   const totalTimeInput = document.getElementById("total-time");
   const maxDepthInput = document.getElementById("max-depth");
   const gfLowInput = document.getElementById("gf-low");
@@ -171,9 +170,7 @@ function updateFromTime(minutes) {
     updateReadouts({
       snapshot: state.timeline[index],
       depthReadout,
-      timeReadout,
-      stopsList,
-      timeline: state.timeline
+      timeReadout
     });
   draw();
 }
