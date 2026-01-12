@@ -36,28 +36,15 @@
       ctx.lineTo(x, height);
       ctx.stroke();
     }
-    ctx.fillStyle = "rgba(16, 36, 58, 0.5)";
-    ctx.font = "12px \"JetBrains Mono\", ui-monospace, monospace";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    for (let i = 0; i <= gridY; i++) {
-      const y = (i / gridY) * height;
-      const depthValue = (i / gridY) * state.maxDepth;
-      ctx.fillText(`${depthValue.toFixed(0)} m`, 8, Math.min(y + 4, height - 14));
-    }
-    ctx.textAlign = "center";
-    ctx.textBaseline = "bottom";
-    for (let i = 0; i <= gridX; i++) {
-      const x = (i / gridX) * width;
-      const timeValue = (i / gridX) * state.totalMinutes;
-      ctx.fillText(`${timeValue.toFixed(0)} min`, x, height - 6);
-    }
     ctx.restore();
 
     if (timeline && timeline.length > 1) {
       const maxSaturation = 1;
       ctx.save();
-      ctx.strokeStyle = "rgba(255, 123, 84, 0.7)";
+      const gradient = ctx.createLinearGradient(0, height, 0, 0);
+      gradient.addColorStop(0, "rgba(34, 197, 94, 0.8)");
+      gradient.addColorStop(1, "rgba(239, 68, 68, 0.8)");
+      ctx.strokeStyle = gradient;
       ctx.lineWidth = 2;
       ctx.beginPath();
       timeline.forEach((point, index) => {
@@ -71,12 +58,6 @@
       });
       ctx.stroke();
 
-      ctx.fillStyle = "rgba(255, 123, 84, 0.8)";
-      ctx.textAlign = "right";
-      ctx.textBaseline = "top";
-      ctx.fillText("Sat", width - 8, 8);
-      ctx.fillText("100%", width - 8, 26);
-      ctx.fillText("0%", width - 8, height - 16);
       ctx.restore();
     }
 
@@ -90,12 +71,12 @@
         ctx.lineTo(x, y);
       }
     });
-    ctx.strokeStyle = "#0f2b3f";
+    ctx.strokeStyle = "#2563eb";
     ctx.lineWidth = 3;
     ctx.stroke();
 
     if (state.points.length) {
-      ctx.fillStyle = "rgba(255, 123, 84, 0.8)";
+      ctx.fillStyle = "rgba(37, 99, 235, 0.85)";
       state.points.forEach((point) => {
         const x = point.t * width;
         const y = (point.depth / state.maxDepth) * height;
@@ -109,7 +90,7 @@
     ctx.beginPath();
     ctx.moveTo(cursorX, 0);
     ctx.lineTo(cursorX, height);
-    ctx.strokeStyle = "rgba(255, 123, 84, 0.45)";
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.6)";
     ctx.lineWidth = 2;
     ctx.stroke();
   }

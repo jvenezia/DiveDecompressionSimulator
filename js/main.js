@@ -3,14 +3,17 @@
   const { normalizePoints } = window.DiveSim.profile;
   const { clamp, drawScene, updateReadouts } = window.DiveSim.ui;
 
-const canvas = document.getElementById("profile");
-const ctx = canvas.getContext("2d");
-const depthReadout = document.getElementById("depth-readout");
-const timeReadout = document.getElementById("time-readout");
-const stopsList = document.getElementById("stops-list");
-const totalTimeInput = document.getElementById("total-time");
-const maxDepthInput = document.getElementById("max-depth");
-const clearBtn = document.getElementById("clear-btn");
+  const canvas = document.getElementById("profile");
+  const ctx = canvas.getContext("2d");
+  const depthReadout = document.getElementById("depth-readout");
+  const timeReadout = document.getElementById("time-readout");
+  const depthAxis = document.getElementById("depth-axis");
+  const timeAxis = document.getElementById("time-axis");
+  const satAxis = document.getElementById("sat-axis");
+  const stopsList = document.getElementById("stops-list");
+  const totalTimeInput = document.getElementById("total-time");
+  const maxDepthInput = document.getElementById("max-depth");
+  const clearBtn = document.getElementById("clear-btn");
 
   const state = {
     points: [],
@@ -18,25 +21,60 @@ const clearBtn = document.getElementById("clear-btn");
     lastPoint: null,
     lastIndex: null,
     totalMinutes: Number(totalTimeInput.value),
-  maxDepth: Number(maxDepthInput.value),
+    maxDepth: Number(maxDepthInput.value),
     stepSec: 60,
-  timeline: [],
-  currentTime: 0,
-  gfLow: 0.3,
-  gfHigh: 0.85
-};
+    timeline: [],
+    currentTime: 0,
+    gfLow: 0.3,
+    gfHigh: 0.85
+  };
 
-function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) {
-    return;
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) {
+      return;
+    }
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    draw();
   }
-  const ratio = window.devicePixelRatio || 1;
-  canvas.width = rect.width * ratio;
-  canvas.height = rect.height * ratio;
-  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  draw();
-}
+
+  function renderAxis(axisEl, labels) {
+    if (!axisEl) return;
+    axisEl.innerHTML = "";
+    labels.forEach((label) => {
+      const span = document.createElement("span");
+      span.textContent = label;
+      axisEl.appendChild(span);
+    });
+  }
+
+  function updateAxes() {
+    const gridY = 6;
+    const gridX = 8;
+    const depthLabels = [];
+    for (let i = 0; i <= gridY; i++) {
+      const depthValue = (i / gridY) * state.maxDepth;
+      depthLabels.push(`${depthValue.toFixed(0)} m`);
+    }
+    renderAxis(depthAxis, depthLabels);
+
+    const timeLabels = [];
+    for (let i = 0; i <= gridX; i++) {
+      const timeValue = (i / gridX) * state.totalMinutes;
+      timeLabels.push(`${timeValue.toFixed(0)} min`);
+    }
+    renderAxis(timeAxis, timeLabels);
+
+    const satLabels = [];
+    for (let i = 0; i <= gridY; i++) {
+      const value = ((gridY - i) / gridY) * 100;
+      satLabels.push(`${value.toFixed(0)}%`);
+    }
+    renderAxis(satAxis, satLabels);
+  }
 
   function toProfile(x, y) {
     const width = canvas.clientWidth;
@@ -115,22 +153,23 @@ function resizeCanvas() {
       totalMinutes: state.totalMinutes,
       stepSec: state.stepSec,
       gfLow: state.gfLow,
-    gfHigh: state.gfHigh
-  });
-  state.currentTime = clamp(state.currentTime, 0, state.totalMinutes);
-  draw();
-  updateFromTime(state.currentTime);
-}
+      gfHigh: state.gfHigh
+    });
+    state.currentTime = clamp(state.currentTime, 0, state.totalMinutes);
+    updateAxes();
+    draw();
+    updateFromTime(state.currentTime);
+  }
 
 function updateFromTime(minutes) {
   const stepMinutes = Math.max(5, state.stepSec) / 60;
   const index = Math.min(state.timeline.length - 1, Math.round(minutes / stepMinutes));
-  updateReadouts({
-    snapshot: state.timeline[index],
-    depthReadout,
-    timeReadout,
-    stopsList
-  });
+    updateReadouts({
+      snapshot: state.timeline[index],
+      depthReadout,
+      timeReadout,
+      stopsList
+    });
   draw();
 }
 
@@ -182,16 +221,18 @@ function setCurrentTime(minutes) {
   totalTimeInput.addEventListener("change", () => {
     state.totalMinutes = clamp(Number(totalTimeInput.value) || 40, 5, 180);
     totalTimeInput.value = state.totalMinutes;
+    updateAxes();
     reindexPoints();
     rebuildTimeline();
     setCurrentTime(0);
   });
 
-maxDepthInput.addEventListener("change", () => {
-  state.maxDepth = clamp(Number(maxDepthInput.value) || 30, 6, 60);
-  maxDepthInput.value = state.maxDepth;
-  rebuildTimeline();
-});
+  maxDepthInput.addEventListener("change", () => {
+    state.maxDepth = clamp(Number(maxDepthInput.value) || 30, 6, 60);
+    maxDepthInput.value = state.maxDepth;
+    updateAxes();
+    rebuildTimeline();
+  });
 
   clearBtn.addEventListener("click", () => {
     setFlatProfile();
@@ -200,14 +241,15 @@ maxDepthInput.addEventListener("change", () => {
     rebuildTimeline();
     setCurrentTime(0);
   });
-window.addEventListener("resize", resizeCanvas);
-const canvasShell = document.querySelector(".canvas-shell");
-if (canvasShell && "ResizeObserver" in window) {
-  const observer = new ResizeObserver(() => resizeCanvas());
-  observer.observe(canvasShell);
-}
+  window.addEventListener("resize", resizeCanvas);
+  const canvasShell = document.getElementById("profile-shell");
+  if (canvasShell && "ResizeObserver" in window) {
+    const observer = new ResizeObserver(() => resizeCanvas());
+    observer.observe(canvasShell);
+  }
   resizeCanvas();
   setFlatProfile();
+  updateAxes();
   rebuildTimeline();
   setCurrentTime(0);
 })();
