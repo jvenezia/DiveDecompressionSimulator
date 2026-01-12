@@ -12,6 +12,13 @@
     return `${minutesPart}:${String(secondsPart).padStart(2, "0")}`;
   }
 
+  function getTranslation(key, fallback) {
+    if (window.i18next && typeof window.i18next.t === "function") {
+      return window.i18next.t(key);
+    }
+    return fallback;
+  }
+
   function drawScene(canvasContext, canvas, state, profilePoints, timeline) {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
@@ -137,7 +144,8 @@
       return;
     }
     const depth = snapshot.depth || 0;
-    depthReadout.textContent = `${depth.toFixed(1)} m`;
+    const depthUnit = getTranslation("units.metersShort", "m");
+    depthReadout.textContent = `${depth.toFixed(1)} ${depthUnit}`;
     timeReadout.textContent = formatTime(snapshot.time);
   }
 

@@ -6,6 +6,8 @@ This document sets expectations for agents contributing.
 
 Dive Decompression Simulator helps visualise decompression algorithm from a drawn dive profile.
 
+This project is a frontend web-app only. No server. Any contribution must comply to this fact.
+
 ## Mandatory Checks Before Any Answer
 
 Run those checks after making any changes in the codebase.
