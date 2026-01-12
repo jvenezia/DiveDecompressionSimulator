@@ -40,6 +40,12 @@
           english: "English",
           french: "French"
         },
+        footer: {
+          authorLabel: "Author",
+          licenseLabel: "License",
+          licenseName: "MIT",
+          openGithub: "Open in GitHub"
+        },
         units: {
           metersShort: "m"
         }
@@ -84,6 +90,12 @@
           label: "Langue",
           english: "Anglais",
           french: "Français"
+        },
+        footer: {
+          authorLabel: "Auteur",
+          licenseLabel: "Licence",
+          licenseName: "MIT",
+          openGithub: "Ouvrir sur GitHub"
         },
         units: {
           metersShort: "m"
