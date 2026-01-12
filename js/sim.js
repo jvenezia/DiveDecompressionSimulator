@@ -16,9 +16,12 @@
   function buildTimeline({ points, totalMinutes, stepSec, gfLow, gfHigh }) {
     const timeline = [];
     const model = new BuhlmannModel();
+    const ceilingModel = new BuhlmannModel();
     const stepMinutes = Math.max(5, stepSec) / 60;
     const steps = Math.ceil(totalMinutes / stepMinutes);
     const profilePoints = normalizePoints(points);
+    const lastNonZeroPoint = [...profilePoints].reverse().find((point) => point.depth > 0.1);
+    const lastNonZeroTime = lastNonZeroPoint ? lastNonZeroPoint.t * totalMinutes : 0;
     const surfaceInspired = Math.max(0.0001, (1 - WATER_VAPOR_PRESSURE) * N2_FRACTION);
     const maxProfileDepth = Math.max(...profilePoints.map((point) => point.depth));
     const maxInspired = Math.max(
@@ -33,9 +36,12 @@
       const time = i * stepMinutes;
       const depth = depthAt(time, totalMinutes, profilePoints);
       const ambient = model.updateSegment(depth, stepMinutes);
+      if (time <= lastNonZeroTime + stepMinutes * 0.5) {
+        ceilingModel.updateSegment(depth, stepMinutes);
+      }
       const fraction = maxAmbient > 1 ? (maxAmbient - ambient) / (maxAmbient - 1) : 1;
       const gf = lerp(low, high, clamp(fraction, 0, 1));
-      const ceilingAmbient = model.getCeiling(gf);
+      const ceilingAmbient = ceilingModel.getCeiling(gf);
       const ceilingMeters = Math.max(0, (ceilingAmbient - 1) * 10);
       const pressures = model.getTissues();
       const maxPressure = Math.max(...pressures);
