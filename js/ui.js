@@ -90,20 +90,6 @@
       canvasContext.closePath();
       canvasContext.fillStyle = "rgba(239, 68, 68, 0.2)";
       canvasContext.fill();
-      canvasContext.beginPath();
-      timeline.forEach((point, index) => {
-        const ceiling = Number.isFinite(point.ceiling) ? point.ceiling : 0;
-        const xPosition = (point.time / state.totalMinutes) * width;
-        const yPosition = (ceiling / state.maxDepth) * height;
-        if (index === 0) {
-          canvasContext.moveTo(xPosition, yPosition);
-        } else {
-          canvasContext.lineTo(xPosition, yPosition);
-        }
-      });
-      canvasContext.strokeStyle = "rgba(239, 68, 68, 0.65)";
-      canvasContext.lineWidth = 2;
-      canvasContext.stroke();
       canvasContext.restore();
     }
 
