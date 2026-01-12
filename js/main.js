@@ -20,6 +20,9 @@
   const stopList = document.getElementById("stop-list");
   const stopHeader = document.getElementById("stop-header");
   const stopEmpty = document.getElementById("stop-empty");
+  const paramMaxDepth = document.getElementById("param-max-depth");
+  const paramAvgDepth = document.getElementById("param-avg-depth");
+  const paramDuration = document.getElementById("param-duration");
 
   const state = {
     points: [],
@@ -209,6 +212,7 @@
     });
     state.recommendedStops = buildStopSchedule(state.timeline);
     state.currentTime = clamp(state.currentTime, 0, state.totalMinutes);
+    renderDiveParams();
     renderStops();
     updateAxes();
     draw();
@@ -295,6 +299,42 @@
       row.append(depthValue, durationValue);
       stopList.appendChild(row);
     });
+  }
+
+  function renderDiveParams() {
+    if (!paramMaxDepth || !paramAvgDepth || !paramDuration) {
+      return;
+    }
+    const depthUnit = getTranslation("units.metersShort", "m");
+    const maxDepth = state.timeline.length
+      ? Math.max(...state.timeline.map((point) => point.depth))
+      : 0;
+    let weightedDepth = 0;
+    let totalDuration = 0;
+    let startTime = null;
+    let endTime = null;
+    for (let index = 0; index < state.timeline.length - 1; index++) {
+      const point = state.timeline[index];
+      const nextPoint = state.timeline[index + 1];
+      const duration = Math.max(0, nextPoint.time - point.time);
+      if (point.depth > 0.1) {
+        if (startTime === null) {
+          startTime = point.time;
+        }
+        weightedDepth += point.depth * duration;
+        totalDuration += duration;
+      } else if (startTime !== null && endTime === null) {
+        endTime = point.time;
+      }
+    }
+    if (startTime !== null && endTime === null) {
+      endTime = state.timeline[state.timeline.length - 1]?.time ?? startTime;
+    }
+    const avgDepth = totalDuration > 0 ? weightedDepth / totalDuration : 0;
+    const immersionDuration = startTime !== null && endTime !== null ? endTime - startTime : 0;
+    paramMaxDepth.textContent = `${maxDepth.toFixed(1)} ${depthUnit}`;
+    paramAvgDepth.textContent = `${avgDepth.toFixed(1)} ${depthUnit}`;
+    paramDuration.textContent = formatTime(immersionDuration);
   }
 
   canvas.addEventListener("pointerdown", (event) => {

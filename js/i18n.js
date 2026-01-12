@@ -26,6 +26,12 @@
         buttons: {
           clear: "Clear"
         },
+        params: {
+          title: "Dive parameters",
+          maxDepth: "Max depth",
+          avgDepth: "Avg depth",
+          duration: "Duration"
+        },
         stops: {
           title: "Recommended stops",
           depth: "Depth (m)",
@@ -82,6 +88,12 @@
         },
         buttons: {
           clear: "Effacer"
+        },
+        params: {
+          title: "Paramètres de plongée",
+          maxDepth: "Profondeur max",
+          avgDepth: "Profondeur moyenne",
+          duration: "Durée"
         },
         stops: {
           title: "Paliers recommandés",
