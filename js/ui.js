@@ -114,21 +114,14 @@
     ctx.stroke();
   }
 
-  function updateReadouts({ snapshot, depthReadout, timeReadout, currentState, decoState, stopsList }) {
+  function updateReadouts({ snapshot, depthReadout, timeReadout, stopsList }) {
     if (!snapshot) {
       return;
     }
     const depth = snapshot.depth || 0;
     depthReadout.textContent = `${depth.toFixed(1)} m`;
     timeReadout.textContent = formatTime(snapshot.time);
-    currentState.textContent = `${snapshot.depth.toFixed(1)} m · ${formatTime(snapshot.time)}`;
-
     const stops = snapshot.stops || [];
-    if (!stops.length) {
-      decoState.textContent = "No stops";
-    } else {
-      decoState.textContent = `${stops.length} stop${stops.length > 1 ? "s" : ""}`;
-    }
 
     stopsList.innerHTML = "";
     if (!stops.length) {

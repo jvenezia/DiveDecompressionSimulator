@@ -7,14 +7,10 @@ const canvas = document.getElementById("profile");
 const ctx = canvas.getContext("2d");
 const depthReadout = document.getElementById("depth-readout");
 const timeReadout = document.getElementById("time-readout");
-const currentState = document.getElementById("current-state");
-const decoState = document.getElementById("deco-state");
 const stopsList = document.getElementById("stops-list");
 const totalTimeInput = document.getElementById("total-time");
 const maxDepthInput = document.getElementById("max-depth");
-const stepSizeInput = document.getElementById("step-size");
 const clearBtn = document.getElementById("clear-btn");
-const recalcBtn = document.getElementById("recalc-btn");
 
   const state = {
     points: [],
@@ -23,7 +19,7 @@ const recalcBtn = document.getElementById("recalc-btn");
     lastIndex: null,
     totalMinutes: Number(totalTimeInput.value),
   maxDepth: Number(maxDepthInput.value),
-  stepSec: Number(stepSizeInput.value),
+    stepSec: 60,
   timeline: [],
   currentTime: 0,
   gfLow: 0.3,
@@ -129,14 +125,12 @@ function resizeCanvas() {
 function updateFromTime(minutes) {
   const stepMinutes = Math.max(5, state.stepSec) / 60;
   const index = Math.min(state.timeline.length - 1, Math.round(minutes / stepMinutes));
-    updateReadouts({
-      snapshot: state.timeline[index],
-      depthReadout,
-      timeReadout,
-      currentState,
-      decoState,
-      stopsList
-    });
+  updateReadouts({
+    snapshot: state.timeline[index],
+    depthReadout,
+    timeReadout,
+    stopsList
+  });
   draw();
 }
 
@@ -199,13 +193,6 @@ maxDepthInput.addEventListener("change", () => {
   rebuildTimeline();
 });
 
-  stepSizeInput.addEventListener("change", () => {
-    state.stepSec = clamp(Number(stepSizeInput.value) || 20, 5, 120);
-    stepSizeInput.value = state.stepSec;
-    reindexPoints();
-    rebuildTimeline();
-  });
-
   clearBtn.addEventListener("click", () => {
     setFlatProfile();
     state.lastPoint = null;
@@ -213,8 +200,6 @@ maxDepthInput.addEventListener("change", () => {
     rebuildTimeline();
     setCurrentTime(0);
   });
-recalcBtn.addEventListener("click", rebuildTimeline);
-
 window.addEventListener("resize", resizeCanvas);
 const canvasShell = document.querySelector(".canvas-shell");
 if (canvasShell && "ResizeObserver" in window) {
