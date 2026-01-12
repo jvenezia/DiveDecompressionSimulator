@@ -28,6 +28,8 @@
     stepSec: 60,
     timeline: [],
     currentTime: 0,
+    hoverTime: null,
+    hoverIndex: null,
     gfLow: (Number(gfLowInput?.value) || 30) / 100,
     gfHigh: (Number(gfHighInput?.value) || 85) / 100
   };
@@ -175,10 +177,44 @@ function updateFromTime(minutes) {
   draw();
 }
 
-function setCurrentTime(minutes) {
-  state.currentTime = clamp(minutes, 0, state.totalMinutes);
-  updateFromTime(state.currentTime);
-}
+  function setCurrentTime(minutes) {
+    state.currentTime = clamp(minutes, 0, state.totalMinutes);
+    updateFromTime(state.currentTime);
+  }
+
+  function setHoverPoint(point, index) {
+    state.hoverTime = point.t * state.totalMinutes;
+    state.hoverIndex = index;
+    updateFromTime(state.hoverTime);
+  }
+
+  function clearHoverPoint() {
+    if (state.hoverTime === null && state.hoverIndex === null) return;
+    state.hoverTime = null;
+    state.hoverIndex = null;
+    draw();
+  }
+
+  function getHoverPoint(x) {
+    const width = canvas.clientWidth;
+    if (!width) return null;
+    const t = clamp(x / width, 0, 1);
+    const { index } = quantizePoint({ t, depth: 0 });
+    if (state.points[index]) {
+      return { point: state.points[index], index };
+    }
+    for (let offset = 1; offset < state.points.length; offset++) {
+      const left = index - offset;
+      if (left >= 0 && state.points[left]) {
+        return { point: state.points[left], index: left };
+      }
+      const right = index + offset;
+      if (right < state.points.length && state.points[right]) {
+        return { point: state.points[right], index: right };
+      }
+    }
+    return null;
+  }
 
   function draw() {
     const profilePoints = normalizePoints(getActivePoints());
@@ -189,35 +225,56 @@ function setCurrentTime(minutes) {
     state.drawing = true;
     canvas.setPointerCapture(event.pointerId);
     const point = toProfile(event.offsetX, event.offsetY);
-    const bucketed = quantizePoint(point);
     fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
-    setCurrentTime(bucketed.t * state.totalMinutes);
+    const hover = getHoverPoint(event.offsetX);
+    if (hover) {
+      setHoverPoint(hover.point, hover.index);
+    } else {
+      clearHoverPoint();
+    }
   });
 
   canvas.addEventListener("pointermove", (event) => {
-    if (!state.drawing) return;
-    const point = toProfile(event.offsetX, event.offsetY);
-    const bucketed = quantizePoint(point);
-    fillBetweenPoints(state.lastPoint, point);
-    rebuildTimeline();
-    setCurrentTime(bucketed.t * state.totalMinutes);
+    if (state.drawing) {
+      const point = toProfile(event.offsetX, event.offsetY);
+      fillBetweenPoints(state.lastPoint, point);
+      rebuildTimeline();
+      const hover = getHoverPoint(event.offsetX);
+      if (hover) {
+        setHoverPoint(hover.point, hover.index);
+      } else {
+        clearHoverPoint();
+      }
+      return;
+    }
+    const hover = getHoverPoint(event.offsetX);
+    if (hover) {
+      setHoverPoint(hover.point, hover.index);
+    } else {
+      clearHoverPoint();
+    }
   });
 
   canvas.addEventListener("pointerup", (event) => {
     state.drawing = false;
     canvas.releasePointerCapture(event.pointerId);
     const point = toProfile(event.offsetX, event.offsetY);
-    const bucketed = quantizePoint(point);
     fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
-    setCurrentTime(bucketed.t * state.totalMinutes);
+    const hover = getHoverPoint(event.offsetX);
+    if (hover) {
+      setHoverPoint(hover.point, hover.index);
+    } else {
+      clearHoverPoint();
+    }
   });
 
   canvas.addEventListener("pointerleave", () => {
     state.drawing = false;
     state.lastPoint = null;
     state.lastIndex = null;
+    clearHoverPoint();
   });
 
   totalTimeInput.addEventListener("change", () => {

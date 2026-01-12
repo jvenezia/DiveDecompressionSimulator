@@ -106,13 +106,30 @@
       });
     }
 
-    const cursorX = (state.currentTime / state.totalMinutes) * width;
-    ctx.beginPath();
-    ctx.moveTo(cursorX, 0);
-    ctx.lineTo(cursorX, height);
-    ctx.strokeStyle = "rgba(148, 163, 184, 0.6)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    if (Number.isFinite(state.hoverTime)) {
+      const cursorX = (state.hoverTime / state.totalMinutes) * width;
+      ctx.beginPath();
+      ctx.moveTo(cursorX, 0);
+      ctx.lineTo(cursorX, height);
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.6)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    if (Number.isInteger(state.hoverIndex) && state.points[state.hoverIndex]) {
+      const hoverPoint = state.points[state.hoverIndex];
+      const hx = hoverPoint.t * width;
+      const hy = (hoverPoint.depth / state.maxDepth) * height;
+      ctx.beginPath();
+      ctx.arc(hx, hy, 6, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(37, 99, 235, 0.9)";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(hx, hy, 9, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(37, 99, 235, 0.25)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
   }
 
   function updateReadouts({ snapshot, depthReadout, timeReadout }) {
