@@ -41,7 +41,7 @@
           empty: "No stops required."
         },
         info: {
-          line1: "The simulator assumes air at 21% O<sub>2</sub> and 79% N<sub>2</sub>.",
+          line1: "The simulator assumes air at 21% Oxygen and 79% Nitrogen.",
           line2:
             "The green-to-red line shows nitrogen tissue saturation over time (higher value means more saturation).",
           line3:
@@ -108,7 +108,7 @@
           empty: "Aucun palier requis."
         },
         info: {
-          line1: "Le simulateur suppose de l'air à 21 % d'oxygène et 79 % d'azote.",
+          line1: "Le simulateur suppose de l'air 21% d'oxygène et 79% d'azote.",
           line2:
             "La ligne verte/rouge indique la saturation des tissus en azote (valeur plus élevée = plus de saturation).",
           line3:
