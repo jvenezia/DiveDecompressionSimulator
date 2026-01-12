@@ -13,6 +13,10 @@
   const stopsList = document.getElementById("stops-list");
   const totalTimeInput = document.getElementById("total-time");
   const maxDepthInput = document.getElementById("max-depth");
+  const gfLowInput = document.getElementById("gf-low");
+  const gfHighInput = document.getElementById("gf-high");
+  const gfLowValue = document.getElementById("gf-low-value");
+  const gfHighValue = document.getElementById("gf-high-value");
   const clearBtn = document.getElementById("clear-btn");
 
   const state = {
@@ -25,8 +29,8 @@
     stepSec: 60,
     timeline: [],
     currentTime: 0,
-    gfLow: 0.3,
-    gfHigh: 0.85
+    gfLow: (Number(gfLowInput?.value) || 30) / 100,
+    gfHigh: (Number(gfHighInput?.value) || 85) / 100
   };
 
   function resizeCanvas() {
@@ -235,6 +239,48 @@ function setCurrentTime(minutes) {
     rebuildTimeline();
   });
 
+  function updateGfDisplay() {
+    if (gfLowValue && gfLowInput) gfLowValue.textContent = String(gfLowInput.value);
+    if (gfHighValue && gfHighInput) gfHighValue.textContent = String(gfHighInput.value);
+  }
+
+  function applyGf(inputEl, outputEl, key, fallback) {
+    if (!inputEl) return;
+    const raw = Number(inputEl.value);
+    const percent = clamp(Number.isFinite(raw) ? raw : fallback, 0, 100);
+    inputEl.value = String(percent);
+    if (outputEl) outputEl.textContent = String(percent);
+    state[key] = percent / 100;
+    if (gfLowInput && gfHighInput) {
+      const low = Number(gfLowInput.value);
+      const high = Number(gfHighInput.value);
+      if (low > high) {
+        if (key === "gfLow") {
+          gfHighInput.value = String(low);
+          if (gfHighValue) gfHighValue.textContent = String(low);
+          state.gfHigh = low / 100;
+        } else {
+          gfLowInput.value = String(high);
+          if (gfLowValue) gfLowValue.textContent = String(high);
+          state.gfLow = high / 100;
+        }
+      }
+    }
+    rebuildTimeline();
+  }
+
+  if (gfLowInput) {
+    const handler = () => applyGf(gfLowInput, gfLowValue, "gfLow", 30);
+    gfLowInput.addEventListener("input", handler);
+    gfLowInput.addEventListener("change", handler);
+  }
+
+  if (gfHighInput) {
+    const handler = () => applyGf(gfHighInput, gfHighValue, "gfHigh", 85);
+    gfHighInput.addEventListener("input", handler);
+    gfHighInput.addEventListener("change", handler);
+  }
+
   clearBtn.addEventListener("click", () => {
     setFlatProfile();
     state.lastPoint = null;
@@ -250,6 +296,7 @@ function setCurrentTime(minutes) {
   }
   resizeCanvas();
   setFlatProfile();
+  updateGfDisplay();
   updateAxes();
   rebuildTimeline();
   setCurrentTime(0);
