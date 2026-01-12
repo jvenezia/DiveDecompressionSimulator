@@ -38,10 +38,10 @@
           title: "Recommended stops",
           depth: "Depth",
           time: "Duration",
-          empty: "No decompression stops required."
+          empty: "No stops required."
         },
         info: {
-          line1: "The simulator assumes air (21% O<sub>2</sub> / 79% N<sub>2</sub>).",
+          line1: "The simulator assumes air at 21% O<sub>2</sub> and 79% N<sub>2</sub>.",
           line2:
             "The green-to-red line shows relative saturation over time (higher value means more saturation).",
           line3:
@@ -103,16 +103,18 @@
           title: "Paliers recommandés",
           depth: "Profondeur",
           time: "Durée",
-          empty: "Aucun palier de décompression requis."
+          empty: "Aucun palier requis."
         },
         info: {
-          line1: "Le simulateur suppose de l'air (21% O<sub>2</sub> / 79% N<sub>2</sub>).",
+          line1: "Le simulateur suppose de l'air 21% d'oxygène et 79% d'azote.",
           line2:
-            "La ligne verte à rouge indique la saturation relative dans le temps (valeur plus élevée = plus de saturation).",
+            "La ligne verte/rouge indique la saturation des tissues en azote (valeur plus élevée = plus de saturation).",
           line3:
-            "La zone rouge du plafond indique la profondeur la plus faible (la plus proche de la surface) autorisée actuellement selon la charge tissulaire et les réglages GF. Si vous y entrez (plus près de la surface), des paliers de décompression sont requis avant de pouvoir remonter davantage.",
+            "La zone rouge indique la profondeur la plus faible autorisée. En s'y approchant lors de la remontée, des paliers sont requis avant de pouvoir remonter davantage.<br>C'est cette zone que l'algorithme Bulhmann calcule.",
           line4:
-            "GF Bas s'applique en profondeur et GF Haut près de la surface, avec des valeurs interpolées entre les deux lors de la remontée. Des GF plus bas rendent le plafond plus profond (plus conservateur) ; des GF plus élevés le rapprochent de la surface."
+            "Les lignes rouges horizontales indique les paliers recommendés. Ils sont déduis de la zone rouge, afin de ne jamais la dépasser.",
+          line5:
+            "GF Bas agit en profondeur. Plus la valeur est faible, plus les paliers commenceront profond.<br>GF Haut agit près de la surface. Plus la valeur est faible, plus les paliers dureront longtemps.<br>La combinaison des GF plus bas rendent les paliers plus profonds et plus long, plus conservateur. 100% est le moins conservateur."
         },
         language: {
           label: "Langue",
