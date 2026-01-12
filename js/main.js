@@ -168,7 +168,8 @@ function updateFromTime(minutes) {
       snapshot: state.timeline[index],
       depthReadout,
       timeReadout,
-      stopsList
+      stopsList,
+      timeline: state.timeline
     });
   draw();
 }
