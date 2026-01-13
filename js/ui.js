@@ -30,9 +30,16 @@
     return fallback;
   }
 
+  function getCanvasSize(canvas) {
+    const ratio = window.devicePixelRatio || 1;
+    return {
+      width: canvas.width / ratio,
+      height: canvas.height / ratio
+    };
+  }
+
   function drawDepthScene(canvasContext, canvas, state, profilePoints, timeline, stopSchedule) {
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
+    const { width, height } = getCanvasSize(canvas);
     canvasContext.clearRect(0, 0, width, height);
 
     canvasContext.save();
@@ -149,8 +156,7 @@
   }
 
   function drawSaturationScene(canvasContext, canvas, state, timeline) {
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
+    const { width, height } = getCanvasSize(canvas);
     canvasContext.clearRect(0, 0, width, height);
 
     canvasContext.save();
