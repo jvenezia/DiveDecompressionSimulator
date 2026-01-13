@@ -67,6 +67,9 @@
       .column-grid {
         @apply grid gap-6;
       }
+      .column-stack {
+        @apply flex flex-col gap-6;
+      }
       .input-grid {
         @apply grid gap-2 md:grid-cols-2;
       }
@@ -97,7 +100,7 @@
         @apply text-xs text-slate-500;
       }
       .dashboard-grid {
-        @apply grid gap-6 lg:grid-cols-[1.3fr_0.9fr];
+        @apply grid items-start gap-6 lg:grid-cols-[1.3fr_0.9fr];
       }
       .eyebrow {
         @apply mb-5 text-xs font-semibold uppercase tracking-wide text-slate-500;
@@ -129,9 +132,6 @@
         font-family: "JetBrains Mono", ui-monospace, monospace;
       }
       .chart-info {
-        @apply mt-1 space-y-4 text-xs text-slate-500;
-      }
-      .chart-info-compact {
         @apply mt-4 space-y-2 text-xs text-slate-500;
       }
       .chart-info-item {
@@ -252,11 +252,12 @@
           </div>
         </div>
         <p class="form-note" data-i18n="info.gfNote" data-i18n-html="true"></p>
+        <p class="form-note" data-i18n="info.airComposition" data-i18n-html="true"></p>
       </div>
     </section>
 
     <section class="dashboard-grid">
-      <div class="column-grid">
+      <div class="column-stack">
         <div class="card">
           <div class="eyebrow" data-i18n="labels.metres"></div>
           <div class="chart-grid">
@@ -316,7 +317,7 @@
             <div></div>
             <div class="axis-time" id="saturation-time-axis"></div>
           </div>
-          <div class="chart-info-compact">
+          <div class="chart-info">
             <p class="chart-info-item">
               <span class="icon-chip" aria-hidden="true">
                 <svg class="icon-small" viewBox="0 0 16 16" fill="none">
@@ -343,8 +344,8 @@
         </div>
       </div>
 
-      <div class="sidebar">
-        <div class="panel">
+      <div class="column-grid">
+        <div class="card">
           <div class="panel-title" data-i18n="params.title"></div>
           <div class="param-list" id="dive-params">
             <div class="param-row">
@@ -361,7 +362,7 @@
             </div>
           </div>
         </div>
-        <div class="panel">
+        <div class="card">
           <div class="panel-title">
             <span data-i18n="stops.title"></span>
           </div>
@@ -371,9 +372,6 @@
           </div>
           <div class="stop-list" id="stop-list"></div>
           <p class="stop-empty" id="stop-empty" data-i18n="stops.empty"></p>
-        </div>
-        <div class="sidebar-footer">
-          <p data-i18n="info.airComposition" data-i18n-html="true"></p>
         </div>
       </div>
     </section>
