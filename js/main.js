@@ -22,7 +22,8 @@
   const profileReadout = document.getElementById("profile-readout");
   const saturationReadoutShell = document.getElementById("saturation-readout-shell");
   const depthAxis = document.getElementById("depth-axis");
-  const timeAxis = document.getElementById("time-axis");
+  const profileTimeAxis = document.getElementById("profile-time-axis");
+  const saturationTimeAxis = document.getElementById("saturation-time-axis");
   const saturationAxis = document.getElementById("sat-axis");
   const totalTimeInput = document.getElementById("total-time");
   const maxDepthInput = document.getElementById("max-depth");
@@ -125,7 +126,8 @@
       const timeValue = (index / gridColumns) * state.totalMinutes;
       timeLabels.push(formatTime(timeValue));
     }
-    renderAxis(timeAxis, timeLabels);
+    renderAxis(profileTimeAxis, timeLabels);
+    renderAxis(saturationTimeAxis, timeLabels);
 
     const maxTissuePressure = getMaxTissuePressure();
     const saturationLabels = [];

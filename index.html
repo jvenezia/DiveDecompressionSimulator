@@ -101,14 +101,9 @@
     </section>
 
     <section class="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
-      <div class="rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
-          <div class="grid gap-5">
-          <div class="grid gap-2 grid-cols-[2rem_1fr] items-center">
-            <div></div>
-            <div class="flex flex-col gap-1">
-              <div class="flex w-full justify-between text-xs font-mono text-slate-500" id="time-axis"></div>
-            </div>
-          </div>
+      <div class="grid gap-6">
+        <div class="rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
+          <div class="mb-5 text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.metres"></div>
           <div class="grid gap-2 grid-cols-[2rem_1fr] items-stretch">
             <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500 text-right pr-2" id="depth-axis"></div>
             <div id="profile-shell" class="relative h-[42vh] min-h-[320px] max-h-[420px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200">
@@ -117,11 +112,14 @@
                 <span id="depth-readout"></span>
                 <span id="time-readout"></span>
               </div>
-              <div class="absolute top-4 left-4 text-[10px] font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.metres"></div>
             </div>
           </div>
+          <div class="mt-3 grid gap-2 grid-cols-[2rem_1fr] items-center">
+            <div></div>
+            <div class="flex w-full justify-between text-xs font-mono text-slate-500" id="profile-time-axis"></div>
+          </div>
           <div class="mt-1 space-y-1 text-xs text-slate-500">
-            <p class="flex items-center gap-2">
+            <p class="mt-4 flex items-center gap-2">
               <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
                 <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
                   <path d="M2 8H14" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round"/>
@@ -129,7 +127,7 @@
               </span>
               <span data-i18n="info.profileLine" data-i18n-html="true"></span>
             </p>
-            <p class="flex items-center gap-2">
+            <p class="mt-4 flex items-center gap-2">
               <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
                 <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
                   <rect x="2" y="3" width="12" height="10" rx="2" fill="#fecaca"/>
@@ -137,7 +135,7 @@
               </span>
               <span data-i18n="info.ceilingZone" data-i18n-html="true"></span>
             </p>
-            <p class="flex items-center gap-2">
+            <p class="mt-4 flex items-center gap-2">
               <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
                 <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
                   <path d="M2 8H14" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round"/>
@@ -146,17 +144,24 @@
               <span data-i18n="info.stopLines" data-i18n-html="true"></span>
             </p>
           </div>
-          <div class="mt-6 grid gap-2 grid-cols-[2rem_1fr] items-stretch">
+        </div>
+
+        <div class="rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
+          <div class="mb-5 text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.saturation"></div>
+          <div class="grid gap-2 grid-cols-[2rem_1fr] items-stretch">
             <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500 text-right pr-2" id="sat-axis"></div>
             <div id="saturation-shell" class="relative h-[22vh] min-h-[160px] max-h-[220px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200">
               <canvas id="saturation" class="block h-full w-full"></canvas>
               <div class="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600" id="saturation-readout-shell">
                 <span id="saturation-readout"></span>
               </div>
-              <div class="absolute top-4 left-4 text-[10px] font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.saturation"></div>
             </div>
           </div>
-          <div class="mt-1 space-y-1 text-xs text-slate-500">
+          <div class="mt-3 grid gap-2 grid-cols-[2rem_1fr] items-center">
+            <div></div>
+            <div class="flex w-full justify-between text-xs font-mono text-slate-500" id="saturation-time-axis"></div>
+          </div>
+          <div class="mt-4 space-y-1 text-xs text-slate-500">
             <p class="flex items-center gap-2">
               <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
                 <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">

@@ -15,7 +15,7 @@
             "This tool is for educational purposes only. It must not be used for real dive planning. It may contain mistakes, is based on approximations, and was not tested for real diving."
         },
         labels: {
-          metres: "Depth",
+          metres: "Dive profile",
           saturation: "Tissue nitrogen pressure",
           minutes: "Time"
         },
@@ -90,7 +90,7 @@
             "Cet outil est uniquement à des fins pédagogiques. Il ne doit pas être utilisé pour planifier une plongée réelle. Il peut contenir des erreurs, est basé sur des approximations et n'a pas été testé pour la plongée réelle."
         },
         labels: {
-          metres: "Profondeur",
+          metres: "Profil de plongée",
           saturation: "Pression d'azone dissous dans les tissus",
           minutes: "Temps"
         },
