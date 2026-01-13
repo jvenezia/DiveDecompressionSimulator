@@ -105,6 +105,9 @@
       .form-note {
         @apply text-xs text-slate-500;
       }
+      .app-note {
+        @apply mt-2 text-xs text-slate-500;
+      }
       .dashboard-grid {
         @apply grid items-start gap-6 lg:grid-cols-[1.3fr_0.9fr];
       }
@@ -206,6 +209,7 @@
           <span class="title-gradient" data-i18n="app.title"></span>
         </h1>
         <p class="app-subtitle" data-i18n="app.subtitle" data-i18n-html="true"></p>
+        <p class="app-note" data-i18n="info.airComposition" data-i18n-html="true"></p>
       </div>
       <div class="language-shell">
         <select class="language-select" id="language-select">
@@ -226,41 +230,6 @@
       </div>
       <p class="notice-body" data-i18n="caution.body"></p>
     </div>
-
-    <section class="card">
-      <div class="card-grid">
-        <div class="input-grid">
-          <div class="field-card">
-            <label class="field-label" for="total-time" data-i18n="inputs.totalTime"></label>
-            <input class="field-input" type="number" id="total-time" min="5" max="180" value="60" />
-          </div>
-          <div class="field-card">
-            <label class="field-label" for="max-depth" data-i18n="inputs.maxDepth"></label>
-            <input class="field-input" type="number" id="max-depth" min="6" max="60" value="60" />
-          </div>
-        </div>
-        <div class="input-grid">
-          <div class="field-card">
-            <label class="field-label" for="gf-low" data-i18n="inputs.gfLow"></label>
-            <div class="range-row">
-              <input class="range-input" type="range" id="gf-low" min="0" max="100" value="85" />
-              <span class="range-value" id="gf-low-value">85</span>
-            </div>
-            <p class="field-help" data-i18n="info.gfLow" data-i18n-html="true"></p>
-          </div>
-          <div class="field-card">
-            <label class="field-label" for="gf-high" data-i18n="inputs.gfHigh"></label>
-            <div class="range-row">
-              <input class="range-input" type="range" id="gf-high" min="0" max="100" value="85" />
-              <span class="range-value" id="gf-high-value">85</span>
-            </div>
-            <p class="field-help" data-i18n="info.gfHigh" data-i18n-html="true"></p>
-          </div>
-        </div>
-        <p class="form-note" data-i18n="info.gfNote" data-i18n-html="true"></p>
-        <p class="form-note" data-i18n="info.airComposition" data-i18n-html="true"></p>
-      </div>
-    </section>
 
     <section class="dashboard-grid">
       <div class="column-stack">
@@ -366,6 +335,29 @@
               <span data-i18n="params.duration"></span>
               <span class="param-value" id="param-duration"></span>
             </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-grid">
+            <div class="input-grid">
+              <div class="field-card">
+                <label class="field-label" for="gf-low" data-i18n="inputs.gfLow"></label>
+                <div class="range-row">
+                  <input class="range-input" type="range" id="gf-low" min="0" max="100" value="85" />
+                  <span class="range-value" id="gf-low-value">85</span>
+                </div>
+                <p class="field-help" data-i18n="info.gfLow" data-i18n-html="true"></p>
+              </div>
+              <div class="field-card">
+                <label class="field-label" for="gf-high" data-i18n="inputs.gfHigh"></label>
+                <div class="range-row">
+                  <input class="range-input" type="range" id="gf-high" min="0" max="100" value="85" />
+                  <span class="range-value" id="gf-high-value">85</span>
+                </div>
+                <p class="field-help" data-i18n="info.gfHigh" data-i18n-html="true"></p>
+              </div>
+            </div>
+            <p class="form-note" data-i18n="info.gfNote" data-i18n-html="true"></p>
           </div>
         </div>
         <div class="card">

@@ -25,8 +25,6 @@
   const profileTimeAxis = document.getElementById("profile-time-axis");
   const saturationTimeAxis = document.getElementById("saturation-time-axis");
   const saturationAxis = document.getElementById("sat-axis");
-  const totalTimeInput = document.getElementById("total-time");
-  const maxDepthInput = document.getElementById("max-depth");
   const gradientFactorLowInput = document.getElementById("gf-low");
   const gradientFactorHighInput = document.getElementById("gf-high");
   const gradientFactorLowValue = document.getElementById("gf-low-value");
@@ -38,13 +36,16 @@
   const paramAvgDepth = document.getElementById("param-avg-depth");
   const paramDuration = document.getElementById("param-duration");
 
+  const DEFAULT_TOTAL_MINUTES = 60;
+  const DEFAULT_MAX_DEPTH = 60;
+
   const state = {
     points: [],
     drawing: false,
     lastPoint: null,
     lastIndex: null,
-    totalMinutes: Number(totalTimeInput.value),
-    maxDepth: Number(maxDepthInput.value),
+    totalMinutes: DEFAULT_TOTAL_MINUTES,
+    maxDepth: DEFAULT_MAX_DEPTH,
     stepSeconds: 60,
     timeline: [],
     recommendedStops: [],
@@ -486,23 +487,6 @@
 
   saturationCanvas.addEventListener("pointerleave", () => {
     handleHoverLeave();
-  });
-
-  totalTimeInput.addEventListener("change", () => {
-    const previousTotal = state.totalMinutes;
-    state.totalMinutes = clamp(Number(totalTimeInput.value) || 40, 5, 180);
-    totalTimeInput.value = state.totalMinutes;
-    updateAxes();
-    retimePoints(previousTotal, state.totalMinutes);
-    rebuildTimeline();
-    setCurrentTime(0);
-  });
-
-  maxDepthInput.addEventListener("change", () => {
-    state.maxDepth = clamp(Number(maxDepthInput.value) || 30, 6, 60);
-    maxDepthInput.value = state.maxDepth;
-    updateAxes();
-    rebuildTimeline();
   });
 
   function updateGradientFactorDisplay() {
