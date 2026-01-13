@@ -21,123 +21,278 @@
     href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;600&display=swap"
     rel="stylesheet"
   />
-  <script>
-    window.tailwind = window.tailwind || {};
-    window.tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ["Space Grotesk", "system-ui", "sans-serif"],
-            display: ["Fraunces", "serif"],
-            mono: ["JetBrains Mono", "ui-monospace", "monospace"]
-          }
-        }
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @layer components {
+      .page {
+        @apply min-h-screen bg-gradient-to-br from-slate-50 via-slate-200 to-sky-300 text-slate-900;
       }
-    };
-  </script>
-  <script src="https://cdn.tailwindcss.com"></script>
+      .shell {
+        @apply mx-auto flex min-h-screen w-full max-w-[1200px] flex-col gap-6 px-6 py-10 lg:px-8;
+      }
+      .app-header {
+        @apply flex flex-col items-start justify-between gap-4 md:flex-row md:items-start;
+      }
+      .app-title {
+        @apply text-4xl font-semibold tracking-wide text-slate-900 drop-shadow-sm md:text-5xl;
+        font-family: "Fraunces", serif;
+      }
+      .title-gradient {
+        @apply bg-gradient-to-r from-sky-700 via-blue-600 to-blue-900 bg-clip-text text-transparent;
+      }
+      .app-subtitle {
+        @apply mt-2 max-w-xl text-base text-slate-600;
+      }
+      .language-shell {
+        @apply flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500 md:ml-auto md:self-start;
+      }
+      .language-select {
+        @apply mt-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-700;
+      }
+      .notice {
+        @apply flex flex-col gap-2 rounded-2xl border border-sky-200/80 bg-sky-50/90 px-5 py-4 text-sm text-sky-900 shadow-sm backdrop-blur;
+      }
+      .notice-title {
+        @apply flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-sky-700;
+      }
+      .notice-body {
+        @apply text-sm text-sky-900;
+      }
+      .card {
+        @apply rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur;
+      }
+      .card-grid {
+        @apply grid gap-3;
+      }
+      .column-grid {
+        @apply grid gap-6;
+      }
+      .input-grid {
+        @apply grid gap-2 md:grid-cols-2;
+      }
+      .field-card {
+        @apply rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2;
+      }
+      .field-label {
+        @apply text-xs font-semibold uppercase tracking-wide text-slate-500;
+      }
+      .field-input {
+        @apply mt-1 w-full border-none bg-transparent text-base text-slate-900 focus:outline-none;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
+      .range-row {
+        @apply mt-1 flex items-center gap-3;
+      }
+      .range-input {
+        @apply w-full;
+      }
+      .range-value {
+        @apply w-10 text-right text-sm text-slate-700;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
+      .field-help {
+        @apply mt-2 text-xs text-slate-500;
+      }
+      .form-note {
+        @apply text-xs text-slate-500;
+      }
+      .dashboard-grid {
+        @apply grid gap-6 lg:grid-cols-[1.3fr_0.9fr];
+      }
+      .eyebrow {
+        @apply mb-5 text-xs font-semibold uppercase tracking-wide text-slate-500;
+      }
+      .chart-grid {
+        @apply grid gap-2 grid-cols-[2rem_1fr] items-stretch;
+      }
+      .axis-label {
+        @apply flex h-full flex-col justify-between text-xs text-slate-500 text-right pr-2;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
+      .chart-shell {
+        @apply relative h-[42vh] min-h-[320px] max-h-[420px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200;
+      }
+      .chart-shell-compact {
+        @apply h-[22vh] min-h-[160px] max-h-[220px];
+      }
+      .chart-canvas {
+        @apply block h-full w-full;
+      }
+      .chart-readout {
+        @apply absolute bottom-4 right-4 items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600;
+      }
+      .chart-time-row {
+        @apply mt-3 grid gap-2 grid-cols-[2rem_1fr] items-center;
+      }
+      .axis-time {
+        @apply flex w-full justify-between text-xs text-slate-500;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
+      .chart-info {
+        @apply mt-1 space-y-4 text-xs text-slate-500;
+      }
+      .chart-info-compact {
+        @apply mt-4 space-y-2 text-xs text-slate-500;
+      }
+      .chart-info-item {
+        @apply flex items-center gap-2;
+      }
+      .icon-small {
+        @apply h-4 w-4;
+      }
+      .icon-chip {
+        @apply inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500;
+      }
+      .sidebar {
+        @apply flex h-full flex-col gap-3 rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur;
+      }
+      .panel {
+        @apply rounded-2xl border border-slate-200/70 bg-white/80 px-4 py-4;
+      }
+      .panel-title {
+        @apply text-xs font-semibold uppercase tracking-wide text-slate-500;
+      }
+      .param-list {
+        @apply mt-3 space-y-2 text-xs text-slate-600;
+      }
+      .param-row {
+        @apply flex items-center justify-between;
+      }
+      .param-value {
+        @apply text-slate-900;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
+      .stop-header {
+        @apply mt-3 hidden grid grid-cols-[1fr_auto] gap-x-4 text-[10px] font-semibold uppercase tracking-wide text-slate-400;
+      }
+      .stop-list {
+        @apply mt-2 space-y-2;
+      }
+      .stop-empty {
+        @apply mt-2 text-xs text-slate-400;
+      }
+      .sidebar-footer {
+        @apply mt-auto space-y-4 text-xs leading-relaxed text-slate-500;
+      }
+      .site-footer {
+        @apply mt-2 flex flex-col items-center gap-3 rounded-3xl border border-slate-200/60 bg-white/80 px-6 py-4 text-xs text-slate-600 shadow-sm backdrop-blur;
+      }
+      .footer-row {
+        @apply flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center;
+      }
+      .footer-item {
+        @apply flex items-center gap-2;
+      }
+      .footer-divider {
+        @apply text-slate-400;
+      }
+      .footer-link {
+        @apply inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-sky-700 transition hover:text-sky-900;
+      }
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 via-slate-200 to-sky-300 text-slate-900">
-  <div class="mx-auto flex min-h-screen w-full max-w-[1200px] flex-col gap-6 px-6 py-10 lg:px-8">
-    <header class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-start">
+<body class="page">
+  <div class="shell">
+    <header class="app-header">
       <div>
-        <h1 class="font-display text-4xl font-semibold tracking-wide text-slate-900 drop-shadow-sm md:text-5xl">
-          <span class="bg-gradient-to-r from-sky-700 via-blue-600 to-blue-900 bg-clip-text text-transparent" data-i18n="app.title"></span>
+        <h1 class="app-title">
+          <span class="title-gradient" data-i18n="app.title"></span>
         </h1>
-        <p class="mt-2 max-w-xl text-base text-slate-600" data-i18n="app.subtitle" data-i18n-html="true"></p>
+        <p class="app-subtitle" data-i18n="app.subtitle" data-i18n-html="true"></p>
       </div>
-      <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500 md:ml-auto md:self-start">
-        <select class="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-700 mt-2" id="language-select">
+      <div class="language-shell">
+        <select class="language-select" id="language-select">
           <option value="en" data-i18n="language.english"></option>
           <option value="fr" data-i18n="language.french"></option>
         </select>
       </div>
     </header>
 
-    <div class="flex flex-col gap-2 rounded-2xl border border-sky-200/80 bg-sky-50/90 px-5 py-4 text-sm text-sky-900 shadow-sm backdrop-blur">
-      <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-sky-700">
-        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <div class="notice">
+      <div class="notice-title">
+        <svg class="icon-small" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/>
           <path d="M12 10V16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
           <circle cx="12" cy="7.5" r="1" fill="currentColor"/>
         </svg>
         <span data-i18n="caution.title"></span>
       </div>
-      <p class="text-sm text-sky-900" data-i18n="caution.body"></p>
+      <p class="notice-body" data-i18n="caution.body"></p>
     </div>
 
-    <section class="rounded-3xl bg-white/90 p-5 shadow-2xl backdrop-blur">
-      <div class="grid gap-3">
-        <div class="grid gap-2 md:grid-cols-2">
-          <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2">
-            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="total-time" data-i18n="inputs.totalTime"></label>
-            <input class="mt-1 w-full border-none bg-transparent text-base font-mono text-slate-900 focus:outline-none" type="number" id="total-time" min="5" max="180" value="60" />
+    <section class="card">
+      <div class="card-grid">
+        <div class="input-grid">
+          <div class="field-card">
+            <label class="field-label" for="total-time" data-i18n="inputs.totalTime"></label>
+            <input class="field-input" type="number" id="total-time" min="5" max="180" value="60" />
           </div>
-          <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2">
-            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="max-depth" data-i18n="inputs.maxDepth"></label>
-            <input class="mt-1 w-full border-none bg-transparent text-base font-mono text-slate-900 focus:outline-none" type="number" id="max-depth" min="6" max="60" value="60" />
-          </div>
-        </div>
-        <div class="grid gap-2 md:grid-cols-2">
-          <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2">
-            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="gf-low" data-i18n="inputs.gfLow"></label>
-            <div class="mt-1 flex items-center gap-3">
-              <input class="w-full" type="range" id="gf-low" min="0" max="100" value="85" />
-              <span class="w-10 text-right font-mono text-sm text-slate-700" id="gf-low-value">85</span>
-            </div>
-            <p class="mt-2 text-xs text-slate-500" data-i18n="info.gfLow" data-i18n-html="true"></p>
-          </div>
-          <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2">
-            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="gf-high" data-i18n="inputs.gfHigh"></label>
-            <div class="mt-1 flex items-center gap-3">
-              <input class="w-full" type="range" id="gf-high" min="0" max="100" value="85" />
-              <span class="w-10 text-right font-mono text-sm text-slate-700" id="gf-high-value">85</span>
-            </div>
-            <p class="mt-2 text-xs text-slate-500" data-i18n="info.gfHigh" data-i18n-html="true"></p>
+          <div class="field-card">
+            <label class="field-label" for="max-depth" data-i18n="inputs.maxDepth"></label>
+            <input class="field-input" type="number" id="max-depth" min="6" max="60" value="60" />
           </div>
         </div>
-        <p class="text-xs text-slate-500" data-i18n="info.gfNote" data-i18n-html="true"></p>
+        <div class="input-grid">
+          <div class="field-card">
+            <label class="field-label" for="gf-low" data-i18n="inputs.gfLow"></label>
+            <div class="range-row">
+              <input class="range-input" type="range" id="gf-low" min="0" max="100" value="85" />
+              <span class="range-value" id="gf-low-value">85</span>
+            </div>
+            <p class="field-help" data-i18n="info.gfLow" data-i18n-html="true"></p>
+          </div>
+          <div class="field-card">
+            <label class="field-label" for="gf-high" data-i18n="inputs.gfHigh"></label>
+            <div class="range-row">
+              <input class="range-input" type="range" id="gf-high" min="0" max="100" value="85" />
+              <span class="range-value" id="gf-high-value">85</span>
+            </div>
+            <p class="field-help" data-i18n="info.gfHigh" data-i18n-html="true"></p>
+          </div>
+        </div>
+        <p class="form-note" data-i18n="info.gfNote" data-i18n-html="true"></p>
       </div>
     </section>
 
-    <section class="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
-      <div class="grid gap-6">
-        <div class="rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
-          <div class="mb-5 text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.metres"></div>
-          <div class="grid gap-2 grid-cols-[2rem_1fr] items-stretch">
-            <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500 text-right pr-2" id="depth-axis"></div>
-            <div id="profile-shell" class="relative h-[42vh] min-h-[320px] max-h-[420px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200">
-              <canvas id="profile" class="block h-full w-full"></canvas>
-              <div class="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600" id="profile-readout">
+    <section class="dashboard-grid">
+      <div class="column-grid">
+        <div class="card">
+          <div class="eyebrow" data-i18n="labels.metres"></div>
+          <div class="chart-grid">
+            <div class="axis-label" id="depth-axis"></div>
+            <div id="profile-shell" class="chart-shell">
+              <canvas id="profile" class="chart-canvas"></canvas>
+              <div class="chart-readout hidden" id="profile-readout">
                 <span id="depth-readout"></span>
                 <span id="time-readout"></span>
               </div>
             </div>
           </div>
-          <div class="mt-3 grid gap-2 grid-cols-[2rem_1fr] items-center">
+          <div class="chart-time-row">
             <div></div>
-            <div class="flex w-full justify-between text-xs font-mono text-slate-500" id="profile-time-axis"></div>
+            <div class="axis-time" id="profile-time-axis"></div>
           </div>
-          <div class="mt-1 space-y-1 text-xs text-slate-500">
-            <p class="mt-4 flex items-center gap-2">
-              <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
-                <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+          <div class="chart-info">
+            <p class="chart-info-item">
+              <span class="icon-chip" aria-hidden="true">
+                <svg class="icon-small" viewBox="0 0 16 16" fill="none">
                   <path d="M2 8H14" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round"/>
                 </svg>
               </span>
               <span data-i18n="info.profileLine" data-i18n-html="true"></span>
             </p>
-            <p class="mt-4 flex items-center gap-2">
-              <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
-                <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+            <p class="chart-info-item">
+              <span class="icon-chip" aria-hidden="true">
+                <svg class="icon-small" viewBox="0 0 16 16" fill="none">
                   <rect x="2" y="3" width="12" height="10" rx="2" fill="#fecaca"/>
                 </svg>
               </span>
               <span data-i18n="info.ceilingZone" data-i18n-html="true"></span>
             </p>
-            <p class="mt-4 flex items-center gap-2">
-              <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
-                <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+            <p class="chart-info-item">
+              <span class="icon-chip" aria-hidden="true">
+                <svg class="icon-small" viewBox="0 0 16 16" fill="none">
                   <path d="M2 8H14" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round"/>
                 </svg>
               </span>
@@ -146,25 +301,25 @@
           </div>
         </div>
 
-        <div class="rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
-          <div class="mb-5 text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.saturation"></div>
-          <div class="grid gap-2 grid-cols-[2rem_1fr] items-stretch">
-            <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500 text-right pr-2" id="sat-axis"></div>
-            <div id="saturation-shell" class="relative h-[22vh] min-h-[160px] max-h-[220px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200">
-              <canvas id="saturation" class="block h-full w-full"></canvas>
-              <div class="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600" id="saturation-readout-shell">
+        <div class="card">
+          <div class="eyebrow" data-i18n="labels.saturation"></div>
+          <div class="chart-grid">
+            <div class="axis-label" id="sat-axis"></div>
+            <div id="saturation-shell" class="chart-shell chart-shell-compact">
+              <canvas id="saturation" class="chart-canvas"></canvas>
+              <div class="chart-readout hidden" id="saturation-readout-shell">
                 <span id="saturation-readout"></span>
               </div>
             </div>
           </div>
-          <div class="mt-3 grid gap-2 grid-cols-[2rem_1fr] items-center">
+          <div class="chart-time-row">
             <div></div>
-            <div class="flex w-full justify-between text-xs font-mono text-slate-500" id="saturation-time-axis"></div>
+            <div class="axis-time" id="saturation-time-axis"></div>
           </div>
-          <div class="mt-4 space-y-1 text-xs text-slate-500">
-            <p class="flex items-center gap-2">
-              <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
-                <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+          <div class="chart-info-compact">
+            <p class="chart-info-item">
+              <span class="icon-chip" aria-hidden="true">
+                <svg class="icon-small" viewBox="0 0 16 16" fill="none">
                   <defs>
                     <linearGradient id="info-sat-line" x1="1" y1="8" x2="15" y2="8" gradientUnits="userSpaceOnUse">
                       <stop offset="0" stop-color="#22c55e"/>
@@ -176,9 +331,9 @@
               </span>
               <span data-i18n="info.saturationLine" data-i18n-html="true"></span>
             </p>
-            <p class="flex items-center gap-2">
-              <span class="inline-flex h-4 w-4 flex-none items-center justify-center text-slate-500" aria-hidden="true">
-                <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+            <p class="chart-info-item">
+              <span class="icon-chip" aria-hidden="true">
+                <svg class="icon-small" viewBox="0 0 16 16" fill="none">
                   <path d="M2 8H14" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round"/>
                 </svg>
               </span>
@@ -188,52 +343,52 @@
         </div>
       </div>
 
-      <div class="flex h-full flex-col gap-3 rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
-        <div class="rounded-2xl border border-slate-200/70 bg-white/80 px-4 py-4">
-          <div class="text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="params.title"></div>
-          <div class="mt-3 space-y-2 text-xs text-slate-600" id="dive-params">
-            <div class="flex items-center justify-between">
+      <div class="sidebar">
+        <div class="panel">
+          <div class="panel-title" data-i18n="params.title"></div>
+          <div class="param-list" id="dive-params">
+            <div class="param-row">
               <span data-i18n="params.maxDepth"></span>
-              <span class="font-mono text-slate-900" id="param-max-depth"></span>
+              <span class="param-value" id="param-max-depth"></span>
             </div>
-            <div class="flex items-center justify-between">
+            <div class="param-row">
               <span data-i18n="params.avgDepth"></span>
-              <span class="font-mono text-slate-900" id="param-avg-depth"></span>
+              <span class="param-value" id="param-avg-depth"></span>
             </div>
-            <div class="flex items-center justify-between">
+            <div class="param-row">
               <span data-i18n="params.duration"></span>
-              <span class="font-mono text-slate-900" id="param-duration"></span>
+              <span class="param-value" id="param-duration"></span>
             </div>
           </div>
         </div>
-        <div class="rounded-2xl border border-slate-200/70 bg-white/80 px-4 py-4">
-          <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <div class="panel">
+          <div class="panel-title">
             <span data-i18n="stops.title"></span>
           </div>
-          <div class="mt-3 hidden grid grid-cols-[1fr_auto] gap-x-4 text-[10px] font-semibold uppercase tracking-wide text-slate-400" id="stop-header">
+          <div class="stop-header" id="stop-header">
             <span data-i18n="stops.depth"></span>
             <span data-i18n="stops.time"></span>
           </div>
-          <div class="mt-2 space-y-2" id="stop-list"></div>
-          <p class="mt-2 text-xs text-slate-400" id="stop-empty" data-i18n="stops.empty"></p>
+          <div class="stop-list" id="stop-list"></div>
+          <p class="stop-empty" id="stop-empty" data-i18n="stops.empty"></p>
         </div>
-        <div class="mt-auto space-y-4 text-xs leading-relaxed text-slate-500">
+        <div class="sidebar-footer">
           <p data-i18n="info.airComposition" data-i18n-html="true"></p>
         </div>
       </div>
     </section>
-    <footer class="mt-2 flex flex-col items-center gap-3 rounded-3xl border border-slate-200/60 bg-white/80 px-6 py-4 text-xs text-slate-600 shadow-sm backdrop-blur">
-      <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center">
-        <div class="flex items-center gap-2">
+    <footer class="site-footer">
+      <div class="footer-row">
+        <div class="footer-item">
           <span>Jeremy Venezia</span>
         </div>
-        <span class="text-slate-400" aria-hidden="true">•</span>
-        <div class="flex items-center gap-2">
-          <span class="font-semibold tracking-wide text-slate-500" data-i18n="footer.licenseLabel"></span>
+        <span class="footer-divider" aria-hidden="true">•</span>
+        <div class="footer-item">
+          <span class="panel-title" data-i18n="footer.licenseLabel"></span>
           <span data-i18n="footer.licenseName"></span>
         </div>
-        <span class="text-slate-400" aria-hidden="true">•</span>
-        <a class="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-sky-700 transition hover:text-sky-900" href="https://github.com/jvenezia/DiveDecompressionSimulator" target="_blank" rel="noreferrer">
+        <span class="footer-divider" aria-hidden="true">•</span>
+        <a class="footer-link" href="https://github.com/jvenezia/DiveDecompressionSimulator" target="_blank" rel="noreferrer">
           <span data-i18n="footer.openGithub"></span>
           <span aria-hidden="true">↗</span>
         </a>
