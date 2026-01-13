@@ -198,10 +198,16 @@
       canvasContext.save();
       const tissueCount = timeline[0]?.tissues?.length ?? 0;
       if (tissueCount > 0) {
-        canvasContext.strokeStyle = "rgba(100, 116, 139, 0.45)";
         canvasContext.lineWidth = 1.5;
+        const maxTissueIndex = Math.max(tissueCount - 1, 1);
+        const lightnessFloor = 35;
+        const lightnessCeiling = 80;
         for (let tissueIndex = 0; tissueIndex < tissueCount; tissueIndex++) {
           let hasStarted = false;
+          const lightness =
+            lightnessFloor +
+            (tissueIndex / maxTissueIndex) * (lightnessCeiling - lightnessFloor);
+          canvasContext.strokeStyle = `hsla(0, 0%, ${lightness}%, 0.6)`;
           canvasContext.beginPath();
           timeline.forEach((point) => {
             const tissuePressure = point.tissues?.[tissueIndex];
