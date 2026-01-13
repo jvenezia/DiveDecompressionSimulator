@@ -18,6 +18,17 @@
     return `${value.toFixed(decimals)}m`;
   }
 
+  function formatPressure(pressureBar) {
+    const value = Number.isFinite(pressureBar) ? pressureBar : 0;
+    let decimals = 2;
+    if (value % 1 === 0) {
+      decimals = 0;
+    } else if ((value * 10) % 1 === 0) {
+      decimals = 1;
+    }
+    return `${value.toFixed(decimals)}b`;
+  }
+
   function formatPercent(value) {
     const safeValue = Number.isFinite(value) ? value : 0;
     return `${Math.round(safeValue)}%`;
@@ -155,7 +166,7 @@
     }
   }
 
-  function drawSaturationScene(canvasContext, canvas, state, timeline) {
+  function drawSaturationScene(canvasContext, canvas, state, timeline, maxTissuePressure) {
     const { width, height } = getCanvasSize(canvas);
     canvasContext.clearRect(0, 0, width, height);
 
@@ -181,8 +192,36 @@
     canvasContext.restore();
 
     if (timeline && timeline.length > 1) {
-      const maxSaturation = 1;
+      const pressureCeiling = Number.isFinite(maxTissuePressure) && maxTissuePressure > 0
+        ? maxTissuePressure
+        : 1;
       canvasContext.save();
+      const tissueCount = timeline[0]?.tissues?.length ?? 0;
+      if (tissueCount > 0) {
+        canvasContext.strokeStyle = "rgba(100, 116, 139, 0.45)";
+        canvasContext.lineWidth = 1.5;
+        for (let tissueIndex = 0; tissueIndex < tissueCount; tissueIndex++) {
+          let hasStarted = false;
+          canvasContext.beginPath();
+          timeline.forEach((point) => {
+            const tissuePressure = point.tissues?.[tissueIndex];
+            if (!Number.isFinite(tissuePressure)) {
+              return;
+            }
+            const xPosition = (point.time / state.totalMinutes) * width;
+            const yPosition = height - clamp(tissuePressure / pressureCeiling, 0, 1) * height;
+            if (!hasStarted) {
+              canvasContext.moveTo(xPosition, yPosition);
+              hasStarted = true;
+            } else {
+              canvasContext.lineTo(xPosition, yPosition);
+            }
+          });
+          if (hasStarted) {
+            canvasContext.stroke();
+          }
+        }
+      }
       const gradient = canvasContext.createLinearGradient(0, height, 0, 0);
       gradient.addColorStop(0, "rgba(34, 197, 94, 0.8)");
       gradient.addColorStop(1, "rgba(239, 68, 68, 0.8)");
@@ -191,7 +230,7 @@
       canvasContext.beginPath();
       timeline.forEach((point, index) => {
         const xPosition = (point.time / state.totalMinutes) * width;
-        const yPosition = height - clamp(point.saturation / maxSaturation, 0, 1) * height;
+        const yPosition = height - clamp(point.maxTissuePressure / pressureCeiling, 0, 1) * height;
         if (index === 0) {
           canvasContext.moveTo(xPosition, yPosition);
         } else {
@@ -226,6 +265,7 @@
     clamp,
     formatTime,
     formatDepth,
+    formatPressure,
     formatPercent,
     drawDepthScene,
     drawSaturationScene,

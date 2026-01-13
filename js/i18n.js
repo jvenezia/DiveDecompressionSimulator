@@ -16,7 +16,7 @@
         },
         labels: {
           metres: "Depth",
-          saturation: "saturation",
+          saturation: "Tissue nitrogen partial pressure",
           minutes: "Time"
         },
         inputs: {
@@ -43,7 +43,7 @@
         info: {
           line1: "The simulator assumes air at 21% Oxygen and 79% Nitrogen.",
           line2:
-            "The green-to-red line shows nitrogen tissue saturation over time (higher value means more saturation).",
+            "The green-to-red line shows the <b>highest tissue nitrogen partial pressure</b> over time (higher value means more loading).",
           line3:
             "The red ceiling zone marks the shallowest (nearest-to-surface depth) you're allowed to be at right now. If you approach that zone during ascent, decompression stops are required before you can go shallower. This is the zone computed by the Bühlmann algorithm.",
           line4:
@@ -83,7 +83,7 @@
         },
         labels: {
           metres: "Profondeur",
-          saturation: "saturation",
+          saturation: "Pression partielle d'azone des tissus",
           minutes: "Temps"
         },
         inputs: {
@@ -110,7 +110,7 @@
         info: {
           line1: "Le simulateur suppose de l'air 21% d'oxygène et 79% d'azote.",
           line2:
-            "La ligne verte/rouge indique la saturation des tissus en azote (valeur plus élevée = plus de saturation).",
+            "La ligne verte/rouge indique la <b>pression partielle d'azote maximale</b> dans les tissus (valeur plus élevée = plus de charge).",
           line3:
             "La zone rouge indique la profondeur la plus faible autorisée. En s'y approchant lors de la remontée, des paliers sont requis avant de pouvoir remonter davantage.<br>C'est cette zone que l'algorithme Bühlmann calcule.",
           line4:

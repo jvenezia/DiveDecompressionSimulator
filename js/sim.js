@@ -1,10 +1,8 @@
 (() => {
   window.DiveSim = window.DiveSim || {};
 
-  const { BuhlmannModel, getStopDepth, calculateTissueSaturation } = window.DiveSim.buhlmann;
+  const { BuhlmannModel, getStopDepth } = window.DiveSim.buhlmann;
   const { normalizePoints, getDepthAtTime } = window.DiveSim.profile;
-  const { NITROGEN_FRACTION, WATER_VAPOR_PRESSURE } = window.DiveSim.constants;
-
   function interpolateLinear(startValue, endValue, amount) {
     return startValue + (endValue - startValue) * amount;
   }
@@ -22,15 +20,7 @@
     const profilePoints = normalizePoints(points);
     const lastNonZeroPoint = [...profilePoints].reverse().find((point) => point.depth > 0.1);
     const lastNonZeroTime = lastNonZeroPoint ? lastNonZeroPoint.timeFraction * totalMinutes : 0;
-    const surfaceInspired = Math.max(
-      0.0001,
-      (1 - WATER_VAPOR_PRESSURE) * NITROGEN_FRACTION
-    );
     const maxProfileDepth = Math.max(...profilePoints.map((point) => point.depth));
-    const maxInspired = Math.max(
-      surfaceInspired + 0.0001,
-      (1 + maxProfileDepth / 10 - WATER_VAPOR_PRESSURE) * NITROGEN_FRACTION
-    );
     const maxAmbient = 1 + maxProfileDepth / 10;
     const low = Math.min(gradientFactorLow, gradientFactorHigh);
     const high = Math.max(gradientFactorLow, gradientFactorHigh);
@@ -47,18 +37,14 @@
       const ceilingAmbient = ceilingModel.getCeiling(gradientFactor);
       const ceilingMeters = Math.max(0, (ceilingAmbient - 1) * 10);
       const pressures = model.getTissues();
-      const maxPressure = Math.max(...pressures);
-      const saturation = Math.max(
-        0,
-        Math.min(1, (maxPressure - surfaceInspired) / (maxInspired - surfaceInspired))
-      );
+      const maxTissuePressure = Math.max(...pressures);
 
       timeline.push({
         time,
         depth,
-        tissues: calculateTissueSaturation(pressures, ambient),
+        tissues: pressures,
         ceiling: ceilingMeters,
-        saturation
+        maxTissuePressure
       });
     }
 

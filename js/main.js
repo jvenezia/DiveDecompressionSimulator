@@ -8,6 +8,7 @@
     updateReadouts,
     formatTime,
     formatDepth,
+    formatPressure,
     formatPercent
   } = window.DiveSim.ui;
 
@@ -86,6 +87,29 @@
     });
   }
 
+  function getMaxTissuePressure() {
+    if (!state.timeline.length) {
+      return 1;
+    }
+    const pressureValues = [];
+    state.timeline.forEach((point) => {
+      if (Number.isFinite(point.maxTissuePressure)) {
+        pressureValues.push(point.maxTissuePressure);
+      }
+      if (Array.isArray(point.tissues)) {
+        point.tissues.forEach((tissuePressure) => {
+          if (Number.isFinite(tissuePressure)) {
+            pressureValues.push(tissuePressure);
+          }
+        });
+      }
+    });
+    if (pressureValues.length === 0) {
+      return 1;
+    }
+    return Math.max(1, ...pressureValues) + 0.1;
+  }
+
   function updateAxes() {
     const gridRows = 6;
     const gridColumns = 8;
@@ -103,10 +127,11 @@
     }
     renderAxis(timeAxis, timeLabels);
 
+    const maxTissuePressure = getMaxTissuePressure();
     const saturationLabels = [];
     for (let index = 0; index <= gridRows; index++) {
-      const value = ((gridRows - index) / gridRows) * 100;
-      saturationLabels.push(formatPercent(value));
+      const value = ((gridRows - index) / gridRows) * maxTissuePressure;
+      saturationLabels.push(formatPressure(value));
     }
     const red = [239, 68, 68];
     const green = [34, 197, 94];
@@ -279,7 +304,7 @@
     setReadoutVisibility(true);
     updateReadouts({ snapshot, depthReadout, timeReadout });
     if (saturationReadout) {
-      saturationReadout.textContent = formatPercent(snapshot.saturation * 100);
+      saturationReadout.textContent = formatPressure(snapshot.maxTissuePressure);
     }
     draw();
   }
@@ -325,6 +350,7 @@
 
   function draw() {
     const profilePoints = normalizePoints(getActivePoints());
+    const maxTissuePressure = getMaxTissuePressure();
     drawDepthScene(
       canvasContext,
       canvas,
@@ -333,7 +359,13 @@
       state.timeline,
       state.recommendedStops
     );
-    drawSaturationScene(saturationContext, saturationCanvas, state, state.timeline);
+    drawSaturationScene(
+      saturationContext,
+      saturationCanvas,
+      state,
+      state.timeline,
+      maxTissuePressure
+    );
   }
 
   function renderStops() {
