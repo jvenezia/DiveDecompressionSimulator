@@ -506,16 +506,24 @@
     clearHoverPoint();
   }
 
+  function preventTouchScroll(event) {
+    if (event.pointerType === "touch" && event.cancelable) {
+      event.preventDefault();
+    }
+  }
+
   canvas.addEventListener("pointerdown", (event) => {
+    preventTouchScroll(event);
     state.drawing = true;
     canvas.setPointerCapture(event.pointerId);
     const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
     fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
     handleHoverMove(event, canvas);
-  });
+  }, { passive: false });
 
   canvas.addEventListener("pointermove", (event) => {
+    preventTouchScroll(event);
     if (state.drawing) {
       const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
       fillBetweenPoints(state.lastPoint, point);
@@ -524,16 +532,17 @@
       return;
     }
     handleHoverMove(event, canvas);
-  });
+  }, { passive: false });
 
   canvas.addEventListener("pointerup", (event) => {
+    preventTouchScroll(event);
     state.drawing = false;
     canvas.releasePointerCapture(event.pointerId);
     const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
     fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
     handleHoverMove(event, canvas);
-  });
+  }, { passive: false });
 
   canvas.addEventListener("pointerleave", () => {
     state.drawing = false;
