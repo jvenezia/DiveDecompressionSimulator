@@ -3,7 +3,8 @@
   const { normalizePoints } = window.DiveSim.profile;
   const {
     clamp,
-    drawScene,
+    drawDepthScene,
+    drawSaturationScene,
     updateReadouts,
     formatTime,
     formatDepth,
@@ -12,8 +13,13 @@
 
   const canvas = document.getElementById("profile");
   const canvasContext = canvas.getContext("2d");
+  const saturationCanvas = document.getElementById("saturation");
+  const saturationContext = saturationCanvas.getContext("2d");
   const depthReadout = document.getElementById("depth-readout");
   const timeReadout = document.getElementById("time-readout");
+  const saturationReadout = document.getElementById("saturation-readout");
+  const profileReadout = document.getElementById("profile-readout");
+  const saturationReadoutShell = document.getElementById("saturation-readout-shell");
   const depthAxis = document.getElementById("depth-axis");
   const timeAxis = document.getElementById("time-axis");
   const saturationAxis = document.getElementById("sat-axis");
@@ -23,7 +29,6 @@
   const gradientFactorHighInput = document.getElementById("gf-high");
   const gradientFactorLowValue = document.getElementById("gf-low-value");
   const gradientFactorHighValue = document.getElementById("gf-high-value");
-  const clearButton = document.getElementById("clear-btn");
   const stopList = document.getElementById("stop-list");
   const stopHeader = document.getElementById("stop-header");
   const stopEmpty = document.getElementById("stop-empty");
@@ -48,15 +53,23 @@
     gradientFactorHigh: (Number(gradientFactorHighInput?.value) || 85) / 100
   };
 
-  function resizeCanvas() {
-    const rect = canvas.getBoundingClientRect();
+  function resizeCanvasElement(targetCanvas, targetContext, container) {
+    if (!targetCanvas || !targetContext || !container) {
+      return;
+    }
+    const rect = container.getBoundingClientRect();
     if (!rect.width || !rect.height) {
       return;
     }
     const ratio = window.devicePixelRatio || 1;
-    canvas.width = rect.width * ratio;
-    canvas.height = rect.height * ratio;
-    canvasContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+    targetCanvas.width = rect.width * ratio;
+    targetCanvas.height = rect.height * ratio;
+    targetContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+  }
+
+  function resizeCanvas() {
+    resizeCanvasElement(canvas, canvasContext, canvasShell);
+    resizeCanvasElement(saturationCanvas, saturationContext, saturationShell);
     draw();
   }
 
@@ -226,14 +239,48 @@
     updateFromTime(state.currentTime);
   }
 
+  function setReadoutVisibility(isVisible) {
+    if (profileReadout) {
+      profileReadout.classList.toggle("hidden", !isVisible);
+    }
+    if (saturationReadoutShell) {
+      saturationReadoutShell.classList.toggle("hidden", !isVisible);
+    }
+  }
+
+  function clearReadouts() {
+    if (depthReadout) {
+      depthReadout.textContent = "";
+    }
+    if (timeReadout) {
+      timeReadout.textContent = "";
+    }
+    if (saturationReadout) {
+      saturationReadout.textContent = "";
+    }
+  }
+
   function updateFromTime(minutes) {
+    if (!Number.isFinite(state.hoverTime)) {
+      setReadoutVisibility(false);
+      clearReadouts();
+      draw();
+      return;
+    }
     const stepMinutes = Math.max(5, state.stepSeconds) / 60;
     const index = Math.min(state.timeline.length - 1, Math.round(minutes / stepMinutes));
-    updateReadouts({
-      snapshot: state.timeline[index],
-      depthReadout,
-      timeReadout
-    });
+    const snapshot = state.timeline[index];
+    if (!snapshot) {
+      setReadoutVisibility(false);
+      clearReadouts();
+      draw();
+      return;
+    }
+    setReadoutVisibility(true);
+    updateReadouts({ snapshot, depthReadout, timeReadout });
+    if (saturationReadout) {
+      saturationReadout.textContent = formatPercent(snapshot.saturation * 100);
+    }
     draw();
   }
 
@@ -252,11 +299,11 @@
     if (state.hoverTime === null && state.hoverIndex === null) return;
     state.hoverTime = null;
     state.hoverIndex = null;
-    draw();
+    updateFromTime(0);
   }
 
-  function getHoverPoint(pointerX) {
-    const width = canvas.clientWidth;
+  function getHoverPoint(pointerX, targetCanvas) {
+    const width = targetCanvas.clientWidth;
     if (!width) return null;
     const timeFraction = clamp(pointerX / width, 0, 1);
     const { index } = quantizePoint({ timeFraction, depth: 0 });
@@ -278,7 +325,15 @@
 
   function draw() {
     const profilePoints = normalizePoints(getActivePoints());
-    drawScene(canvasContext, canvas, state, profilePoints, state.timeline, state.recommendedStops);
+    drawDepthScene(
+      canvasContext,
+      canvas,
+      state,
+      profilePoints,
+      state.timeline,
+      state.recommendedStops
+    );
+    drawSaturationScene(saturationContext, saturationCanvas, state, state.timeline);
   }
 
   function renderStops() {
@@ -342,18 +397,26 @@
     paramDuration.textContent = formatTime(immersionDuration);
   }
 
+  function handleHoverMove(event, targetCanvas) {
+    const hover = getHoverPoint(event.offsetX, targetCanvas);
+    if (hover) {
+      setHoverPoint(hover.point, hover.index);
+    } else {
+      clearHoverPoint();
+    }
+  }
+
+  function handleHoverLeave() {
+    clearHoverPoint();
+  }
+
   canvas.addEventListener("pointerdown", (event) => {
     state.drawing = true;
     canvas.setPointerCapture(event.pointerId);
     const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
     fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
-    const hover = getHoverPoint(event.offsetX);
-    if (hover) {
-      setHoverPoint(hover.point, hover.index);
-    } else {
-      clearHoverPoint();
-    }
+    handleHoverMove(event, canvas);
   });
 
   canvas.addEventListener("pointermove", (event) => {
@@ -361,20 +424,10 @@
       const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
       fillBetweenPoints(state.lastPoint, point);
       rebuildTimeline();
-      const hover = getHoverPoint(event.offsetX);
-      if (hover) {
-        setHoverPoint(hover.point, hover.index);
-      } else {
-        clearHoverPoint();
-      }
+      handleHoverMove(event, canvas);
       return;
     }
-    const hover = getHoverPoint(event.offsetX);
-    if (hover) {
-      setHoverPoint(hover.point, hover.index);
-    } else {
-      clearHoverPoint();
-    }
+    handleHoverMove(event, canvas);
   });
 
   canvas.addEventListener("pointerup", (event) => {
@@ -383,19 +436,22 @@
     const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
     fillBetweenPoints(state.lastPoint, point);
     rebuildTimeline();
-    const hover = getHoverPoint(event.offsetX);
-    if (hover) {
-      setHoverPoint(hover.point, hover.index);
-    } else {
-      clearHoverPoint();
-    }
+    handleHoverMove(event, canvas);
   });
 
   canvas.addEventListener("pointerleave", () => {
     state.drawing = false;
     state.lastPoint = null;
     state.lastIndex = null;
-    clearHoverPoint();
+    handleHoverLeave();
+  });
+
+  saturationCanvas.addEventListener("pointermove", (event) => {
+    handleHoverMove(event, saturationCanvas);
+  });
+
+  saturationCanvas.addEventListener("pointerleave", () => {
+    handleHoverLeave();
   });
 
   totalTimeInput.addEventListener("change", () => {
@@ -467,18 +523,15 @@
     gradientFactorHighInput.addEventListener("change", handler);
   }
 
-  clearButton.addEventListener("click", () => {
-    setFlatProfile();
-    state.lastPoint = null;
-    state.lastIndex = null;
-    rebuildTimeline();
-    setCurrentTime(0);
-  });
-  window.addEventListener("resize", resizeCanvas);
   const canvasShell = document.getElementById("profile-shell");
+  const saturationShell = document.getElementById("saturation-shell");
+  window.addEventListener("resize", resizeCanvas);
   if (canvasShell && "ResizeObserver" in window) {
     const observer = new ResizeObserver(() => resizeCanvas());
     observer.observe(canvasShell);
+    if (saturationShell) {
+      observer.observe(saturationShell);
+    }
   }
   resizeCanvas();
   setFlatProfile();

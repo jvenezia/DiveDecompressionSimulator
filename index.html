@@ -66,65 +66,67 @@
       <p class="text-sm text-sky-900" data-i18n="caution.body"></p>
     </div>
 
+    <section class="rounded-3xl bg-white/90 p-5 shadow-2xl backdrop-blur">
+      <div class="grid gap-3">
+        <div class="grid gap-2 md:grid-cols-2">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="total-time" data-i18n="inputs.totalTime"></label>
+            <input class="mt-1 w-full border-none bg-transparent text-base font-mono text-slate-900 focus:outline-none" type="number" id="total-time" min="5" max="180" value="60" />
+          </div>
+          <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="max-depth" data-i18n="inputs.maxDepth"></label>
+            <input class="mt-1 w-full border-none bg-transparent text-base font-mono text-slate-900 focus:outline-none" type="number" id="max-depth" min="6" max="60" value="60" />
+          </div>
+        </div>
+        <div class="grid gap-2 md:grid-cols-2">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="gf-low" data-i18n="inputs.gfLow"></label>
+            <div class="mt-1 flex items-center gap-3">
+              <input class="w-full" type="range" id="gf-low" min="0" max="100" value="85" />
+              <span class="w-10 text-right font-mono text-sm text-slate-700" id="gf-low-value">85</span>
+            </div>
+          </div>
+          <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-3 py-2">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="gf-high" data-i18n="inputs.gfHigh"></label>
+            <div class="mt-1 flex items-center gap-3">
+              <input class="w-full" type="range" id="gf-high" min="0" max="100" value="85" />
+              <span class="w-10 text-right font-mono text-sm text-slate-700" id="gf-high-value">85</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
       <div class="rounded-3xl bg-white/90 p-6 shadow-2xl backdrop-blur">
           <div class="grid gap-5">
-            <div class="grid gap-2 md:grid-cols-[auto_1fr_auto] md:items-center">
-              <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.metres"></div>
-              <div></div>
-              <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 text-right whitespace-nowrap" data-i18n="labels.saturation"></div>
-            </div>
-            <div class="grid gap-2 md:grid-cols-[auto_1fr_auto] md:items-stretch">
-              <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500" id="depth-axis"></div>
-              <div id="profile-shell" class="relative h-[42vh] min-h-[320px] max-h-[420px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200">
-              <canvas id="profile" class="block h-full w-full"></canvas>
-              <div class="absolute bottom-4 right-4 flex items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600">
-                <span id="depth-readout"></span>
-                <span id="time-readout"></span>
-              </div>
-            </div>
-            <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500 text-right" id="sat-axis"></div>
-          </div>
-          <div class="grid gap-2 md:grid-cols-[auto_1fr_auto] md:items-center">
+          <div class="grid gap-2 md:grid-cols-[auto_1fr] md:items-center">
             <div></div>
             <div class="flex flex-col gap-1">
               <div class="flex w-full justify-between text-xs font-mono text-slate-500" id="time-axis"></div>
-              <div class="self-end text-[10px] font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.minutes"></div>
-            </div>
-            <div></div>
-          </div>
-
-        <div class="grid gap-4">
-          <div class="grid gap-3 md:grid-cols-2">
-            <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3">
-              <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="total-time" data-i18n="inputs.totalTime"></label>
-              <input class="mt-2 w-full border-none bg-transparent text-lg font-mono text-slate-900 focus:outline-none" type="number" id="total-time" min="5" max="180" value="60" />
-            </div>
-            <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3">
-              <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="max-depth" data-i18n="inputs.maxDepth"></label>
-              <input class="mt-2 w-full border-none bg-transparent text-lg font-mono text-slate-900 focus:outline-none" type="number" id="max-depth" min="6" max="60" value="60" />
             </div>
           </div>
-          <div class="grid gap-3 md:grid-cols-2">
-            <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3">
-              <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="gf-low" data-i18n="inputs.gfLow"></label>
-              <div class="mt-2 flex items-center gap-3">
-                <input class="w-full" type="range" id="gf-low" min="0" max="100" value="85" />
-                <span class="w-10 text-right font-mono text-sm text-slate-700" id="gf-low-value">85</span>
+          <div class="grid gap-2 md:grid-cols-[auto_1fr] md:items-stretch">
+            <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500" id="depth-axis"></div>
+            <div id="profile-shell" class="relative h-[42vh] min-h-[320px] max-h-[420px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200">
+              <canvas id="profile" class="block h-full w-full"></canvas>
+              <div class="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600" id="profile-readout">
+                <span id="depth-readout"></span>
+                <span id="time-readout"></span>
               </div>
+              <div class="absolute top-4 left-4 text-[10px] font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.metres"></div>
             </div>
-            <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3">
-              <label class="text-xs font-semibold uppercase tracking-wide text-slate-500" for="gf-high" data-i18n="inputs.gfHigh"></label>
-              <div class="mt-2 flex items-center gap-3">
-                <input class="w-full" type="range" id="gf-high" min="0" max="100" value="85" />
-                <span class="w-10 text-right font-mono text-sm text-slate-700" id="gf-high-value">85</span>
+          </div>
+          <div class="grid gap-2 md:grid-cols-[auto_1fr] md:items-stretch">
+            <div class="flex h-full flex-col justify-between text-xs font-mono text-slate-500" id="sat-axis"></div>
+            <div id="saturation-shell" class="relative h-[22vh] min-h-[160px] max-h-[220px] overflow-hidden rounded-2xl border border-slate-300/40 bg-gradient-to-b from-slate-50 to-slate-200">
+              <canvas id="saturation" class="block h-full w-full"></canvas>
+              <div class="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600" id="saturation-readout-shell">
+                <span id="saturation-readout"></span>
               </div>
+              <div class="absolute top-4 left-4 text-[10px] font-semibold uppercase tracking-wide text-slate-500" data-i18n="labels.saturation"></div>
             </div>
           </div>
-          <div class="flex flex-wrap gap-2">
-            <button class="rounded-full border border-slate-200 bg-white/90 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:shadow-lg" id="clear-btn" data-i18n="buttons.clear"></button>
-          </div>
-        </div>
         </div>
       </div>
 
