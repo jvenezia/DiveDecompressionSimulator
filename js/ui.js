@@ -91,7 +91,7 @@
     if (stopSchedule && stopSchedule.length) {
       canvasContext.save();
       canvasContext.strokeStyle = "rgba(239, 68, 68, 0.85)";
-      canvasContext.lineWidth = 3;
+      canvasContext.lineWidth = 5;
       stopSchedule.forEach((stop) => {
         const startX = (stop.startTime / state.totalMinutes) * width;
         const endX = (stop.endTime / state.totalMinutes) * width;
