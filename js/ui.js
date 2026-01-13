@@ -114,12 +114,12 @@
         canvasContext.lineTo(xPosition, yPosition);
       }
     });
-    canvasContext.strokeStyle = "#2563eb";
+    canvasContext.strokeStyle = "rgba(37, 99, 235, 0.60)";
     canvasContext.lineWidth = 3;
     canvasContext.stroke();
 
     if (state.points.length) {
-      canvasContext.fillStyle = "rgba(37, 99, 235, 0.85)";
+      canvasContext.fillStyle = "rgba(37, 99, 235, 0.60)";
       state.points.forEach((point) => {
         const xPosition = point.timeFraction * width;
         const yPosition = (point.depth / state.maxDepth) * height;
@@ -145,7 +145,7 @@
       const hoverY = (hoverPoint.depth / state.maxDepth) * height;
       canvasContext.beginPath();
       canvasContext.arc(hoverX, hoverY, 6, 0, Math.PI * 2);
-      canvasContext.fillStyle = "rgba(37, 99, 235, 0.9)";
+      canvasContext.fillStyle = "rgba(37, 99, 235, 0.75)";
       canvasContext.fill();
       canvasContext.beginPath();
       canvasContext.arc(hoverX, hoverY, 9, 0, Math.PI * 2);
