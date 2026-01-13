@@ -16,7 +16,7 @@
         },
         labels: {
           metres: "Depth",
-          saturation: "Tissue nitrogen partial pressure",
+          saturation: "Tissue nitrogen pressure",
           minutes: "Time"
         },
         inputs: {
@@ -41,15 +41,23 @@
           empty: "No stops required."
         },
         info: {
-          line1: "The simulator assumes air at 21% Oxygen and 79% Nitrogen.",
-          line2:
-            "The green/red line indicates the maximum partial pressure of nitrogen dissolved in the tissues (also called tissue nitrogen tension).",
-          line3:
-            "The red ceiling zone marks the shallowest (nearest-to-surface depth) you're allowed to be at right now. If you approach that zone during ascent, decompression stops are required before you can go shallower. This is the zone computed by the Bühlmann algorithm.",
-          line4:
-            "The horizontal red lines indicate the recommended stops. They are derived from the red zone to avoid ever exceeding it.",
-          line5:
-            "<b>GF Low</b> applies at depth. The lower the value, the deeper the stops begin.<br><b>GF High</b> applies near the surface. The lower the value, the longer the stops last.<br>Lower GF values make stops deeper and longer, which is more conservative. 100% is the least conservative."
+          airComposition: "The simulator assumes air at 21% Oxygen and 79% Nitrogen.",
+          saturationLine:
+            "Maximum partial pressure of nitrogen dissolved in the tissues (also called tissue nitrogen tension).",
+          compartments:
+            "Tissue nitrogen pressures of individual compartments.",
+          ceilingZone:
+            "Shallowest allowed depth. If you approach it during ascent, decompression stops are required before you can go shallower.",
+          stopLines:
+            "Recommended stops, derived from the red zone, to avoid exceeding it.",
+          profileLine:
+            "Dive profile (depth over time).",
+          gfLow:
+            "Applies at depth. The lower the value, the deeper the stops begin.",
+          gfHigh:
+            "Applies near the surface. The lower the value, the longer the stops last.",
+          gfNote:
+            "Lower GF values make stops deeper and longer, which is more conservative. 100% is the least conservative."
         },
         language: {
           label: "Language",
@@ -83,7 +91,7 @@
         },
         labels: {
           metres: "Profondeur",
-          saturation: "Pression partielle d'azone dissous dans les tissus",
+          saturation: "Pression d'azone dissous dans les tissus",
           minutes: "Temps"
         },
         inputs: {
@@ -108,15 +116,23 @@
           empty: "Aucun palier requis."
         },
         info: {
-          line1: "Le simulateur suppose de l'air 21% d'oxygène et 79% d'azote.",
-          line2:
-            "La ligne verte/rouge indique la <b>pression partielle d'azote maximale</b> dissous dans les tissus (ou tension d'azote tissulaire).",
-          line3:
-            "La zone rouge indique la profondeur la plus faible autorisée. En s'y approchant lors de la remontée, des paliers sont requis avant de pouvoir remonter davantage.<br>C'est cette zone que l'algorithme Bühlmann calcule.",
-          line4:
-            "Les lignes rouges horizontales indiquent les paliers recommandés. Ils sont déduits de la zone rouge, afin de ne jamais la dépasser.",
-          line5:
-            "<b>GF Bas</b> agit en profondeur. Plus la valeur est faible, plus les paliers commenceront profonds.<br><b>GF Haut</b> agit près de la surface. Plus la valeur est faible, plus les paliers dureront longtemps.<br>Des GF plus bas rendent les paliers plus profonds et plus longs, donc plus conservateurs. 100% est le moins conservateur."
+          airComposition: "Le simulateur suppose de l'air 21% d'oxygène et 79% d'azote.",
+          saturationLine:
+            "<b>Pression partielle d'azote maximale</b> dissous dans les tissus (ou tension d'azote tissulaire).",
+          compartments:
+            "Pression partielle d'azote tissulaire de chauqe compartiment (utilisés pour déterminer la pression maximale).",
+          ceilingZone:
+            "Profondeur la plus faible autorisée. En s'y approchant lors de la remontée, des paliers sont requis avant de pouvoir remonter davantage.",
+          stopLines:
+            "Paliers recommandés, déduits de la zone rouge, afin de ne jamais la dépasser.",
+          profileLine:
+            "Profil de plongée (profondeur dans le temps).",
+          gfLow:
+            "Agit en profondeur. Plus la valeur est faible, plus les paliers commenceront profonds.",
+          gfHigh:
+            "Agit près de la surface. Plus la valeur est faible, plus les paliers dureront longtemps.",
+          gfNote:
+            "Des GF plus bas rendent les paliers plus profonds et plus longs, donc plus conservateurs. 100% est le moins conservateur."
         },
         language: {
           label: "Langue",
