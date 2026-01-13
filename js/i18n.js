@@ -17,6 +17,7 @@
         labels: {
           metres: "Dive profile",
           saturation: "Tissue nitrogen pressure",
+          speed: "Ascent / descent speed (m/min)",
           minutes: "Time"
         },
         inputs: {
@@ -92,6 +93,7 @@
         labels: {
           metres: "Profil de plongée",
           saturation: "Pression partielle d'azote dissous dans les tissus",
+          speed: "Vitesse de remontée / descente (m/min)",
           minutes: "Temps"
         },
         inputs: {

@@ -29,6 +29,13 @@
     return `${value.toFixed(decimals)}b`;
   }
 
+  function formatSpeed(speedMetersPerMinute, showPlus = false) {
+    const value = Number.isFinite(speedMetersPerMinute) ? speedMetersPerMinute : 0;
+    const decimals = value % 1 === 0 ? 0 : 1;
+    const sign = showPlus && value > 0 ? "+" : "";
+    return `${sign}${value.toFixed(decimals)}`;
+  }
+
   function formatPercent(value) {
     const safeValue = Number.isFinite(value) ? value : 0;
     return `${Math.round(safeValue)}%`;
@@ -253,6 +260,81 @@
     }
   }
 
+  function drawSpeedScene(canvasContext, canvas, state, timeline, speedSegments, maxSpeed) {
+    const { width, height } = getCanvasSize(canvas);
+    canvasContext.clearRect(0, 0, width, height);
+
+    canvasContext.save();
+    canvasContext.strokeStyle = "rgba(16, 36, 58, 0.08)";
+    canvasContext.lineWidth = 1;
+    const gridRows = 6;
+    const gridColumns = 8;
+    for (let index = 1; index < gridRows; index++) {
+      const yPosition = (index / gridRows) * height;
+      canvasContext.beginPath();
+      canvasContext.moveTo(0, yPosition);
+      canvasContext.lineTo(width, yPosition);
+      canvasContext.stroke();
+    }
+    for (let index = 1; index < gridColumns; index++) {
+      const xPosition = (index / gridColumns) * width;
+      canvasContext.beginPath();
+      canvasContext.moveTo(xPosition, 0);
+      canvasContext.lineTo(xPosition, height);
+      canvasContext.stroke();
+    }
+    canvasContext.restore();
+
+    if (timeline && speedSegments && speedSegments.length) {
+      const midpoint = height / 2;
+      const safeMaxSpeed = Number.isFinite(maxSpeed) && maxSpeed > 0 ? maxSpeed : 1;
+      const startColor = [191, 219, 254];
+      const endColor = [30, 64, 175];
+
+      for (let index = 0; index < speedSegments.length; index++) {
+        const speed = speedSegments[index];
+        if (!Number.isFinite(speed)) {
+          continue;
+        }
+        const segmentStart = timeline[index];
+        const segmentEnd = timeline[index + 1];
+        if (!segmentStart || !segmentEnd) {
+          continue;
+        }
+        const startX = (segmentStart.time / state.totalMinutes) * width;
+        const endX = (segmentEnd.time / state.totalMinutes) * width;
+        const segmentWidth = Math.max(1, endX - startX);
+        const magnitude = clamp(Math.abs(speed) / safeMaxSpeed, 0, 1);
+        const barHeight = magnitude * (height / 2);
+        const red = Math.round(startColor[0] + (endColor[0] - startColor[0]) * magnitude);
+        const green = Math.round(startColor[1] + (endColor[1] - startColor[1]) * magnitude);
+        const blue = Math.round(startColor[2] + (endColor[2] - startColor[2]) * magnitude);
+        canvasContext.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+        const barY = speed >= 0 ? midpoint - barHeight : midpoint;
+        canvasContext.fillRect(startX, barY, segmentWidth, barHeight);
+      }
+
+      canvasContext.save();
+      canvasContext.strokeStyle = "rgba(30, 41, 59, 0.3)";
+      canvasContext.lineWidth = 1;
+      canvasContext.beginPath();
+      canvasContext.moveTo(0, midpoint);
+      canvasContext.lineTo(width, midpoint);
+      canvasContext.stroke();
+      canvasContext.restore();
+    }
+
+    if (Number.isFinite(state.hoverTime)) {
+      const cursorX = (state.hoverTime / state.totalMinutes) * width;
+      canvasContext.beginPath();
+      canvasContext.moveTo(cursorX, 0);
+      canvasContext.lineTo(cursorX, height);
+      canvasContext.strokeStyle = "rgba(148, 163, 184, 0.6)";
+      canvasContext.lineWidth = 2;
+      canvasContext.stroke();
+    }
+  }
+
   function updateReadouts({ snapshot, depthReadout, timeReadout }) {
     if (!snapshot) {
       return;
@@ -267,9 +349,11 @@
     formatTime,
     formatDepth,
     formatPressure,
+    formatSpeed,
     formatPercent,
     drawDepthScene,
     drawSaturationScene,
+    drawSpeedScene,
     updateReadouts,
     getTranslation
   };

@@ -5,10 +5,12 @@
     clamp,
     drawDepthScene,
     drawSaturationScene,
+    drawSpeedScene,
     updateReadouts,
     formatTime,
     formatDepth,
     formatPressure,
+    formatSpeed,
     formatPercent
   } = window.DiveSim.ui;
 
@@ -16,15 +18,21 @@
   const canvasContext = canvas.getContext("2d");
   const saturationCanvas = document.getElementById("saturation");
   const saturationContext = saturationCanvas.getContext("2d");
+  const speedCanvas = document.getElementById("speed");
+  const speedContext = speedCanvas.getContext("2d");
   const depthReadout = document.getElementById("depth-readout");
   const timeReadout = document.getElementById("time-readout");
   const saturationReadout = document.getElementById("saturation-readout");
+  const speedReadout = document.getElementById("speed-readout");
   const profileReadout = document.getElementById("profile-readout");
   const saturationReadoutShell = document.getElementById("saturation-readout-shell");
+  const speedReadoutShell = document.getElementById("speed-readout-shell");
   const depthAxis = document.getElementById("depth-axis");
   const profileTimeAxis = document.getElementById("profile-time-axis");
   const saturationTimeAxis = document.getElementById("saturation-time-axis");
+  const speedTimeAxis = document.getElementById("speed-time-axis");
   const saturationAxis = document.getElementById("sat-axis");
+  const speedAxis = document.getElementById("speed-axis");
   const gradientFactorLowInput = document.getElementById("gf-low");
   const gradientFactorHighInput = document.getElementById("gf-high");
   const gradientFactorLowValue = document.getElementById("gf-low-value");
@@ -49,6 +57,8 @@
     stepSeconds: 60,
     timeline: [],
     recommendedStops: [],
+    speedSegments: [],
+    maxSpeed: 1,
     currentTime: 0,
     hoverTime: null,
     hoverIndex: null,
@@ -73,6 +83,7 @@
   function resizeCanvas() {
     resizeCanvasElement(canvas, canvasContext, canvasShell);
     resizeCanvasElement(saturationCanvas, saturationContext, saturationShell);
+    resizeCanvasElement(speedCanvas, speedContext, speedShell);
     draw();
   }
 
@@ -112,6 +123,26 @@
     return Math.max(1, ...pressureValues) + 0.1;
   }
 
+  function buildSpeedSegments(timeline) {
+    if (!Array.isArray(timeline) || timeline.length < 2) {
+      return { segments: [], maxSpeed: 1 };
+    }
+    const segments = [];
+    let maxSpeed = 0;
+    for (let index = 1; index < timeline.length; index++) {
+      const previous = timeline[index - 1];
+      const current = timeline[index];
+      const duration = current.time - previous.time;
+      let speed = 0;
+      if (Number.isFinite(duration) && duration > 0) {
+        speed = (previous.depth - current.depth) / duration;
+      }
+      segments.push(speed);
+      maxSpeed = Math.max(maxSpeed, Math.abs(speed));
+    }
+    return { segments, maxSpeed: Math.max(1, maxSpeed) };
+  }
+
   function updateAxes() {
     const gridRows = 6;
     const gridColumns = 8;
@@ -129,6 +160,7 @@
     }
     renderAxis(profileTimeAxis, timeLabels);
     renderAxis(saturationTimeAxis, timeLabels);
+    renderAxis(speedTimeAxis, timeLabels);
 
     const maxTissuePressure = getMaxTissuePressure();
     const saturationLabels = [];
@@ -146,6 +178,14 @@
         color: `rgb(${channel(red[0], green[0])}, ${channel(red[1], green[1])}, ${channel(red[2], green[2])})`
       };
     });
+
+    const speedLabels = [];
+    const maxSpeed = Number.isFinite(state.maxSpeed) && state.maxSpeed > 0 ? state.maxSpeed : 1;
+    for (let index = 0; index <= gridRows; index++) {
+      const value = maxSpeed - (index / gridRows) * maxSpeed * 2;
+      speedLabels.push(formatSpeed(value, true));
+    }
+    renderAxis(speedAxis, speedLabels);
   }
 
   function mapPointerToProfilePoint(pointerX, pointerY) {
@@ -258,6 +298,9 @@
       gradientFactorLow: state.gradientFactorLow,
       gradientFactorHigh: state.gradientFactorHigh
     });
+    const speedData = buildSpeedSegments(state.timeline);
+    state.speedSegments = speedData.segments;
+    state.maxSpeed = speedData.maxSpeed;
     state.recommendedStops = buildStopSchedule(state.timeline);
     state.currentTime = clamp(state.currentTime, 0, state.totalMinutes);
     renderDiveParams();
@@ -274,6 +317,9 @@
     if (saturationReadoutShell) {
       saturationReadoutShell.classList.toggle("hidden", !isVisible);
     }
+    if (speedReadoutShell) {
+      speedReadoutShell.classList.toggle("hidden", !isVisible);
+    }
   }
 
   function clearReadouts() {
@@ -285,6 +331,9 @@
     }
     if (saturationReadout) {
       saturationReadout.textContent = "";
+    }
+    if (speedReadout) {
+      speedReadout.textContent = "";
     }
   }
 
@@ -308,6 +357,10 @@
     updateReadouts({ snapshot, depthReadout, timeReadout });
     if (saturationReadout) {
       saturationReadout.textContent = formatPressure(snapshot.maxTissuePressure);
+    }
+    if (speedReadout) {
+      const speed = state.speedSegments[Math.max(0, index - 1)] ?? 0;
+      speedReadout.textContent = formatSpeed(speed, true);
     }
     draw();
   }
@@ -368,6 +421,14 @@
       state,
       state.timeline,
       maxTissuePressure
+    );
+    drawSpeedScene(
+      speedContext,
+      speedCanvas,
+      state,
+      state.timeline,
+      state.speedSegments,
+      state.maxSpeed
     );
   }
 
@@ -489,6 +550,14 @@
     handleHoverLeave();
   });
 
+  speedCanvas.addEventListener("pointermove", (event) => {
+    handleHoverMove(event, speedCanvas);
+  });
+
+  speedCanvas.addEventListener("pointerleave", () => {
+    handleHoverLeave();
+  });
+
   function updateGradientFactorDisplay() {
     if (gradientFactorLowValue && gradientFactorLowInput) {
       gradientFactorLowValue.textContent = String(gradientFactorLowInput.value);
@@ -543,12 +612,16 @@
 
   const canvasShell = document.getElementById("profile-shell");
   const saturationShell = document.getElementById("saturation-shell");
+  const speedShell = document.getElementById("speed-shell");
   window.addEventListener("resize", resizeCanvas);
   if (canvasShell && "ResizeObserver" in window) {
     const observer = new ResizeObserver(() => resizeCanvas());
     observer.observe(canvasShell);
     if (saturationShell) {
       observer.observe(saturationShell);
+    }
+    if (speedShell) {
+      observer.observe(speedShell);
     }
   }
   resizeCanvas();
