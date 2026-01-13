@@ -91,7 +91,7 @@
         },
         labels: {
           metres: "Profil de plongée",
-          saturation: "Pression d'azone dissous dans les tissus",
+          saturation: "Pression partielle d'azote dissous dans les tissus",
           minutes: "Temps"
         },
         inputs: {
@@ -120,7 +120,7 @@
           saturationLine:
             "<b>Pression partielle d'azote maximale</b> dissous dans les tissus (ou tension d'azote tissulaire).",
           compartments:
-            "Pression partielle d'azote tissulaire de chauqe compartiment (utilisés pour déterminer la pression maximale).",
+            "Pression partielle d'azote tissulaire de chaque compartiment (utilisés pour déterminer la pression maximale).",
           ceilingZone:
             "Profondeur la plus faible autorisée. En s'y approchant lors de la remontée, des paliers sont requis avant de pouvoir remonter davantage.",
           stopLines:
