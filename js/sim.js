@@ -70,43 +70,44 @@
       return [];
     }
     const stops = [];
-    const maxDepth = Math.max(...timeline.map((point) => point.depth));
-    const depthThreshold = Math.max(0.1, maxDepth - 0.1);
-    const deepestIndex = timeline.findIndex((point) => point.depth >= maxDepth - 0.05);
-    let startIndex = deepestIndex > -1 ? deepestIndex : 0;
-    for (let index = startIndex + 1; index < timeline.length; index++) {
-      if (timeline[index].depth < depthThreshold) {
-        startIndex = index;
-        break;
-      }
-    }
-    let lastStopDepth = null;
-    for (let index = startIndex; index < timeline.length - 1; index++) {
+    let activeStop = null;
+    for (let index = 0; index < timeline.length - 1; index++) {
       const point = timeline[index];
       const nextPoint = timeline[index + 1];
       const duration = Math.max(0, nextPoint.time - point.time);
       let stopDepth = getStopDepth(point.ceiling);
       if (!stopDepth || duration <= 0) {
+        activeStop = null;
         continue;
       }
-      if (lastStopDepth !== null && stopDepth > lastStopDepth) {
-        continue;
-      }
-      const lastStop = stops[stops.length - 1];
-      if (lastStop && lastStop.depth === stopDepth) {
-        lastStop.duration += duration;
-        lastStop.endTime = nextPoint.time;
+      if (activeStop && activeStop.depth === stopDepth) {
+        activeStop.duration += duration;
+        activeStop.endTime = nextPoint.time;
       } else {
-        stops.push({
+        activeStop = {
           depth: stopDepth,
           duration,
           startTime: point.time,
           endTime: nextPoint.time
-        });
+        };
+        stops.push(activeStop);
       }
-      lastStopDepth = stopDepth;
     }
-    return stops;
+    if (!stops.length) {
+      return stops;
+    }
+    let deepestStop = -Infinity;
+    let startIndex = stops.length - 1;
+    for (let index = stops.length - 1; index >= 0; index--) {
+      const stop = stops[index];
+      if (stop.depth >= deepestStop) {
+        deepestStop = stop.depth;
+        startIndex = index;
+        continue;
+      }
+      break;
+    }
+    return stops.slice(startIndex);
   }
 
   window.DiveSim.sim = {
