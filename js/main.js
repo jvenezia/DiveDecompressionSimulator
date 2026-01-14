@@ -47,6 +47,7 @@
 
   const DEFAULT_TOTAL_MINUTES = 60;
   const DEFAULT_MAX_DEPTH = 60;
+  const MIN_SPEED_RANGE = 15;
 
   const state = {
     points: [],
@@ -60,7 +61,7 @@
     timeline: [],
     recommendedStops: [],
     speedSegments: [],
-    maxSpeed: 1,
+    maxSpeed: MIN_SPEED_RANGE,
     currentTime: 0,
     hoverTime: null,
     hoverIndex: null,
@@ -127,7 +128,7 @@
 
   function buildSpeedSegments(timeline) {
     if (!Array.isArray(timeline) || timeline.length < 2) {
-      return { segments: [], maxSpeed: 1 };
+      return { segments: [], maxSpeed: MIN_SPEED_RANGE };
     }
     const segments = [];
     let maxSpeed = 0;
@@ -142,7 +143,7 @@
       segments.push(speed);
       maxSpeed = Math.max(maxSpeed, Math.abs(speed));
     }
-    return { segments, maxSpeed: Math.max(1, maxSpeed) };
+    return { segments, maxSpeed: Math.max(MIN_SPEED_RANGE, maxSpeed) };
   }
 
   function updateAxes() {

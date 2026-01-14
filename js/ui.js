@@ -263,6 +263,8 @@
   function drawSpeedScene(canvasContext, canvas, state, timeline, speedSegments, maxSpeed) {
     const { width, height } = getCanvasSize(canvas);
     canvasContext.clearRect(0, 0, width, height);
+    const safeMaxSpeed = Number.isFinite(maxSpeed) && maxSpeed > 0 ? maxSpeed : 1;
+    const midpoint = height / 2;
 
     canvasContext.save();
     canvasContext.strokeStyle = "rgba(16, 36, 58, 0.08)";
@@ -285,9 +287,20 @@
     }
     canvasContext.restore();
 
+    const recommendedMinSpeed = 9;
+    const recommendedMaxSpeed = 12;
+    const zoneMin = clamp(recommendedMinSpeed / safeMaxSpeed, 0, 1);
+    const zoneMax = clamp(recommendedMaxSpeed / safeMaxSpeed, 0, 1);
+    const zoneHeight = (zoneMax - zoneMin) * (height / 2);
+    if (zoneHeight > 0) {
+      const zoneTop = midpoint - zoneMax * (height / 2);
+      canvasContext.save();
+      canvasContext.fillStyle = "rgba(34, 197, 94, 0.22)";
+      canvasContext.fillRect(0, zoneTop, width, zoneHeight);
+      canvasContext.restore();
+    }
+
     if (timeline && speedSegments && speedSegments.length) {
-      const midpoint = height / 2;
-      const safeMaxSpeed = Number.isFinite(maxSpeed) && maxSpeed > 0 ? maxSpeed : 1;
       const startColor = [191, 219, 254];
       const endColor = [30, 64, 175];
 

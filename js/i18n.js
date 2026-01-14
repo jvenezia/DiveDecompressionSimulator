@@ -53,6 +53,15 @@
             "Recommended stops, derived from the red zone, to avoid exceeding it.",
           profileLine:
             "Dive profile (depth over time).",
+          profileHint: "Draw a dive profile",
+          speedRecommended:
+            "Recommended ascent speed is between 9 and 12 m/min.",
+          speedTooSlow:
+            "Ascending too slowly continues to increase nitrogen pressure in the tissues.",
+          speedTooFast:
+            "Ascending too quickly increases the risk of decompression incidents (bubble formation) and other incidents such as pulmonary overpressure.",
+          descentGuidance:
+            "Descent can be done at a comfortable ear-equalization speed. Tissue nitrogen pressure still accumulates.",
           gfLow:
             "Applies at depth. The lower the value, the deeper the stops begin.",
           gfHigh:
@@ -81,9 +90,9 @@
         app: {
           title: "Simulateur de désaturation en plongée",
           subtitle:
-            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de désaturation en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C.",
+            "Dessinez un profil de plongée pour voir la saturation des tissus et les paliers de désaturation en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C.",
           description:
-            "Déssinez un profil de plongée pour voir la saturation des tissus et les paliers de désaturation en temps réel. Utilise une implémentation compacte du Buhlmann ZHL-16C."
+            "Dessinez un profil de plongée pour voir la saturation des tissus et les paliers de désaturation en temps réel. Utilise une implémentation compacte du Bühlmann ZHL-16C."
         },
         caution: {
           title: "Utiliser avec prudence",
@@ -129,6 +138,15 @@
             "Paliers recommandés, déduits de la zone rouge, afin de ne jamais la dépasser.",
           profileLine:
             "Profil de plongée (profondeur dans le temps).",
+          profileHint: "Dessinez un profil de plongée",
+          speedRecommended:
+            "La vitesse recommandée de remontée est entre 9 et 12 m/min.",
+          speedTooSlow:
+            "Remonter trop lentement continue d'augmenter la pression d'azote dans les tissus.",
+          speedTooFast:
+            "Remonter trop rapidement favorise les accidents de désaturation (création de bulles) et d'autres incidents comme la surpression pulmonaire.",
+          descentGuidance:
+            "La descente peut se faire à la vitesse confortable d'équilibrage des oreilles. La pression d'azote tissulaire s'accumule aussi.",
           gfLow:
             "Agit en profondeur. Plus la valeur est faible, plus les paliers commenceront profonds.",
           gfHigh:

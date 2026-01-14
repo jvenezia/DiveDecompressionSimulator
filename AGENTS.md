@@ -35,6 +35,7 @@ Deprecation and other warnings must be fixed at the source (do not ignore).
 - Testing: Fast, deterministic, behavior-focused. One logical assert per test.
 - Dependencies & Config: Isolate side effects. Keep config external.
 - Documentation: Minimal but clear Readme.
+- Localization: Do not hardcode user-facing text in HTML or JS; use i18n keys in `js/i18n.js`.
 
 ## Misc Notes
 

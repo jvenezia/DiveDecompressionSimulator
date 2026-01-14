@@ -279,7 +279,7 @@
             <div class="axis-label" id="depth-axis"></div>
             <div id="profile-shell" class="chart-shell">
               <canvas id="profile" class="chart-canvas"></canvas>
-              <div id="profile-hint" class="chart-hint">Dessinez un profile de plongée</div>
+              <div id="profile-hint" class="chart-hint" data-i18n="info.profileHint"></div>
               <div class="chart-readout hidden" id="profile-readout">
                 <span id="depth-readout"></span>
                 <span id="time-readout"></span>
@@ -373,6 +373,19 @@
           <div class="chart-time-row">
             <div></div>
             <div class="axis-time" id="speed-time-axis"></div>
+          </div>
+          <div class="chart-info">
+            <p class="chart-info-item">
+              <span class="icon-chip" aria-hidden="true">
+                <svg class="icon-small" viewBox="0 0 16 16" fill="none">
+                  <rect x="2" y="3" width="12" height="10" rx="2" fill="#22c55e" fill-opacity="0.25"/>
+                </svg>
+              </span>
+              <span data-i18n="info.speedRecommended"></span>
+            </p>
+            <p data-i18n="info.speedTooSlow"></p>
+            <p data-i18n="info.speedTooFast"></p>
+            <p data-i18n="info.descentGuidance"></p>
           </div>
         </div>
       </div>
