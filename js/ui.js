@@ -415,6 +415,37 @@
     canvasContext.closePath();
   }
 
+  function getMValueLineData(state, compartments, nitrogenFraction, waterVaporPressure) {
+    const maxAmbientPressure = Math.max(1, 1 + state.maxDepth / 10);
+    const safeNitrogenFraction = Math.max(0.01, nitrogenFraction || 0);
+    const safeWaterVaporPressure = Math.max(0, waterVaporPressure || 0);
+    const dominantCompartment = getDominantCompartment(maxAmbientPressure, compartments);
+    const aCoefficient = dominantCompartment?.aCoefficient ?? 0;
+    const bCoefficient = dominantCompartment?.bCoefficient ?? 1;
+    const scaleMax = 5;
+    const lowGradientFactor = clamp(state.gradientFactorLow, 0, 1);
+    const highGradientFactor = clamp(state.gradientFactorHigh, 0, 1);
+    const highPointPressure =
+      highGradientFactor * (aCoefficient + bCoefficient * safeWaterVaporPressure);
+
+    const slopeMValue = bCoefficient / safeNitrogenFraction;
+    const interceptMValue = aCoefficient + bCoefficient * safeWaterVaporPressure;
+    const mValueAtScaleMax = slopeMValue * scaleMax + interceptMValue;
+    const currentEndY = scaleMax + lowGradientFactor * (mValueAtScaleMax - scaleMax);
+    const currentSlope = Math.abs(scaleMax) > 0.0001
+      ? (currentEndY - highPointPressure) / scaleMax
+      : 0;
+    const currentIntercept = highPointPressure;
+
+    return {
+      scaleMax,
+      slopeMValue,
+      interceptMValue,
+      currentSlope,
+      currentIntercept
+    };
+  }
+
   function drawMValueScene(
     canvasContext,
     canvas,
@@ -447,29 +478,13 @@
     }
     canvasContext.restore();
 
-    const maxAmbientPressure = Math.max(1, 1 + state.maxDepth / 10);
-    const safeNitrogenFraction = Math.max(0.01, nitrogenFraction || 0);
-    const safeWaterVaporPressure = Math.max(0, waterVaporPressure || 0);
-    const dominantCompartment = getDominantCompartment(maxAmbientPressure, compartments);
-    const aCoefficient = dominantCompartment?.aCoefficient ?? 0;
-    const bCoefficient = dominantCompartment?.bCoefficient ?? 1;
-    const scaleMax = 5;
-    const lowGradientFactor = clamp(state.gradientFactorLow, 0, 1);
-    const highGradientFactor = clamp(state.gradientFactorHigh, 0, 1);
-    const highPointPressure =
-      highGradientFactor * (aCoefficient + bCoefficient * safeWaterVaporPressure);
-
-    const slopeMValue = bCoefficient / safeNitrogenFraction;
-    const interceptMValue = aCoefficient + bCoefficient * safeWaterVaporPressure;
-    const currentStartX = 0;
-    const currentStartY = highPointPressure;
-    const mValueAtScaleMax = slopeMValue * scaleMax + interceptMValue;
-    const currentEndX = scaleMax;
-    const currentEndY = scaleMax + lowGradientFactor * (mValueAtScaleMax - scaleMax);
-    const currentSlope = Math.abs(currentEndX - currentStartX) > 0.0001
-      ? (currentEndY - currentStartY) / (currentEndX - currentStartX)
-      : 0;
-    const currentIntercept = currentStartY - currentSlope * currentStartX;
+    const {
+      scaleMax,
+      slopeMValue,
+      interceptMValue,
+      currentSlope,
+      currentIntercept
+    } = getMValueLineData(state, compartments, nitrogenFraction, waterVaporPressure);
 
     const toScreenX = (value) => (value / scaleMax) * width;
     const toScreenY = (value) => height - (value / scaleMax) * height;
@@ -598,6 +613,63 @@
     );
     canvasContext.fill();
     canvasContext.restore();
+
+    if (state.mValueHover) {
+      const ambientPressure = state.mValueHover.ambientPressure;
+      const mValuePressure = state.mValueHover.mValuePressure;
+      const ambientLinePressure = state.mValueHover.ambientLinePressure;
+      const gradientLinePressure = state.mValueHover.gradientLinePressure;
+      const hoverX = toScreenX(ambientPressure);
+      const hoverYValues = [
+        toScreenY(mValuePressure),
+        toScreenY(ambientLinePressure),
+        toScreenY(gradientLinePressure)
+      ];
+
+      const drawHoverMarker = (dataX, dataY, strokeStyle) => {
+        if (
+          !Number.isFinite(dataX)
+          || !Number.isFinite(dataY)
+          || dataX < 0
+          || dataX > scaleMax
+          || dataY < 0
+          || dataY > scaleMax
+        ) {
+          return;
+        }
+        canvasContext.save();
+        canvasContext.beginPath();
+        canvasContext.arc(toScreenX(dataX), toScreenY(dataY), 4.5, 0, Math.PI * 2);
+        canvasContext.fillStyle = "rgba(255, 255, 255, 0.9)";
+        canvasContext.fill();
+        canvasContext.lineWidth = 2;
+        canvasContext.strokeStyle = strokeStyle;
+        canvasContext.stroke();
+        canvasContext.restore();
+      };
+
+      canvasContext.save();
+      canvasContext.strokeStyle = "rgba(148, 163, 184, 0.6)";
+      canvasContext.lineWidth = 1;
+      hoverYValues.forEach((hoverY) => {
+        if (!Number.isFinite(hoverY) || hoverY < 0 || hoverY > height) {
+          return;
+        }
+        canvasContext.beginPath();
+        canvasContext.moveTo(hoverX, height);
+        canvasContext.lineTo(hoverX, hoverY);
+        canvasContext.stroke();
+        canvasContext.beginPath();
+        canvasContext.moveTo(0, hoverY);
+        canvasContext.lineTo(hoverX, hoverY);
+        canvasContext.stroke();
+      });
+      canvasContext.restore();
+
+      drawHoverMarker(ambientPressure, mValuePressure, "rgba(148, 163, 184, 0.9)");
+      drawHoverMarker(ambientPressure, ambientLinePressure, "rgba(148, 163, 184, 0.6)");
+      drawHoverMarker(ambientPressure, gradientLinePressure, "rgba(239, 68, 68, 0.9)");
+    }
   }
 
   function updateReadouts({ snapshot, depthReadout, timeReadout }) {
@@ -620,6 +692,7 @@
     drawSaturationScene,
     drawSpeedScene,
     drawMValueScene,
+    getMValueLineData,
     updateReadouts,
     getTranslation
   };

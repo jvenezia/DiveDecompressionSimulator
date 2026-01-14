@@ -7,6 +7,7 @@
     drawSaturationScene,
     drawSpeedScene,
     drawMValueScene,
+    getMValueLineData,
     updateReadouts,
     formatTime,
     formatDepth,
@@ -32,6 +33,13 @@
   const profileHint = document.getElementById("profile-hint");
   const saturationReadoutShell = document.getElementById("saturation-readout-shell");
   const speedReadoutShell = document.getElementById("speed-readout-shell");
+  const mValueReadoutShell = document.getElementById("mvalue-readout-shell");
+  const mValueReadoutMValueX = document.getElementById("mvalue-readout-mvalue-x");
+  const mValueReadoutMValueY = document.getElementById("mvalue-readout-mvalue-y");
+  const mValueReadoutAmbientX = document.getElementById("mvalue-readout-ambient-x");
+  const mValueReadoutAmbientY = document.getElementById("mvalue-readout-ambient-y");
+  const mValueReadoutGradientX = document.getElementById("mvalue-readout-gradient-x");
+  const mValueReadoutGradientY = document.getElementById("mvalue-readout-gradient-y");
   const depthAxis = document.getElementById("depth-axis");
   const profileTimeAxis = document.getElementById("profile-time-axis");
   const saturationTimeAxis = document.getElementById("saturation-time-axis");
@@ -71,6 +79,7 @@
     currentTime: 0,
     hoverTime: null,
     hoverIndex: null,
+    mValueHover: null,
     gradientFactorLow: (Number(gradientFactorLowInput?.value) || 30) / 100,
     gradientFactorHigh: (Number(gradientFactorHighInput?.value) || 85) / 100
   };
@@ -362,6 +371,68 @@
     }
   }
 
+  function setMValueReadoutVisibility(isVisible) {
+    if (mValueReadoutShell) {
+      mValueReadoutShell.classList.toggle("hidden", !isVisible);
+    }
+  }
+
+  function clearMValueReadout() {
+    if (mValueReadoutMValueX) {
+      mValueReadoutMValueX.textContent = "";
+    }
+    if (mValueReadoutMValueY) {
+      mValueReadoutMValueY.textContent = "";
+    }
+    if (mValueReadoutAmbientX) {
+      mValueReadoutAmbientX.textContent = "";
+    }
+    if (mValueReadoutAmbientY) {
+      mValueReadoutAmbientY.textContent = "";
+    }
+    if (mValueReadoutGradientX) {
+      mValueReadoutGradientX.textContent = "";
+    }
+    if (mValueReadoutGradientY) {
+      mValueReadoutGradientY.textContent = "";
+    }
+  }
+
+  function updateMValueReadout(hoverData) {
+    if (!mValueReadoutShell) {
+      return;
+    }
+    if (!hoverData) {
+      setMValueReadoutVisibility(false);
+      clearMValueReadout();
+      return;
+    }
+    const ambientValue = formatPressure(hoverData.ambientPressure);
+    const mValueValue = formatPressure(hoverData.mValuePressure);
+    const ambientLineValue = formatPressure(hoverData.ambientLinePressure);
+    const gradientLineValue = formatPressure(hoverData.gradientLinePressure);
+
+    setMValueReadoutVisibility(true);
+    if (mValueReadoutMValueX) {
+      mValueReadoutMValueX.textContent = ambientValue;
+    }
+    if (mValueReadoutMValueY) {
+      mValueReadoutMValueY.textContent = mValueValue;
+    }
+    if (mValueReadoutAmbientX) {
+      mValueReadoutAmbientX.textContent = ambientValue;
+    }
+    if (mValueReadoutAmbientY) {
+      mValueReadoutAmbientY.textContent = ambientLineValue;
+    }
+    if (mValueReadoutGradientX) {
+      mValueReadoutGradientX.textContent = ambientValue;
+    }
+    if (mValueReadoutGradientY) {
+      mValueReadoutGradientY.textContent = gradientLineValue;
+    }
+  }
+
   function updateFromTime(minutes) {
     if (!Number.isFinite(state.hoverTime)) {
       setReadoutVisibility(false);
@@ -408,6 +479,19 @@
     updateFromTime(0);
   }
 
+  function setMValueHover(hoverData) {
+    state.mValueHover = hoverData;
+    updateMValueReadout(hoverData);
+    draw();
+  }
+
+  function clearMValueHover() {
+    if (!state.mValueHover) return;
+    state.mValueHover = null;
+    updateMValueReadout(null);
+    draw();
+  }
+
   function getHoverPoint(pointerX, targetCanvas) {
     const width = targetCanvas.clientWidth;
     if (!width) return null;
@@ -427,6 +511,28 @@
       }
     }
     return null;
+  }
+
+  function getMValueHoverData(pointerX, targetCanvas) {
+    const width = targetCanvas.clientWidth;
+    if (!width) return null;
+    const {
+      scaleMax,
+      slopeMValue,
+      interceptMValue,
+      currentSlope,
+      currentIntercept
+    } = getMValueLineData(state, COMPARTMENTS, NITROGEN_FRACTION, WATER_VAPOR_PRESSURE);
+    const ambientPressure = clamp((pointerX / width) * scaleMax, 0, scaleMax);
+    const mValuePressure = slopeMValue * ambientPressure + interceptMValue;
+    const ambientLinePressure = ambientPressure;
+    const gradientLinePressure = currentSlope * ambientPressure + currentIntercept;
+    return {
+      ambientPressure,
+      mValuePressure,
+      ambientLinePressure,
+      gradientLinePressure
+    };
   }
 
   function draw() {
@@ -539,6 +645,19 @@
     clearHoverPoint();
   }
 
+  function handleMValueHoverMove(event, targetCanvas) {
+    const hoverData = getMValueHoverData(event.offsetX, targetCanvas);
+    if (hoverData) {
+      setMValueHover(hoverData);
+    } else {
+      clearMValueHover();
+    }
+  }
+
+  function handleMValueHoverLeave() {
+    clearMValueHover();
+  }
+
   function preventTouchScroll(event) {
     if (event.pointerType === "touch" && event.cancelable) {
       event.preventDefault();
@@ -602,6 +721,14 @@
 
   speedCanvas.addEventListener("pointerleave", () => {
     handleHoverLeave();
+  });
+
+  mValueCanvas.addEventListener("pointermove", (event) => {
+    handleMValueHoverMove(event, mValueCanvas);
+  });
+
+  mValueCanvas.addEventListener("pointerleave", () => {
+    handleMValueHoverLeave();
   });
 
   function updateRangeFill(inputElement) {

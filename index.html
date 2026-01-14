@@ -213,6 +213,22 @@
       .chart-readout {
         @apply absolute bottom-4 right-4 items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600;
       }
+      .mvalue-readout-shell {
+        @apply absolute bottom-4 right-4 grid gap-1 rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-[10px] text-slate-600;
+        pointer-events: none;
+      }
+      .mvalue-readout-row {
+        @apply grid grid-cols-[1fr_auto_auto] gap-2;
+      }
+      .mvalue-readout-icon {
+        @apply flex items-center text-slate-500;
+      }
+      .mvalue-readout-label {
+        @apply text-slate-700;
+      }
+      .mvalue-readout-value {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
       .chart-time-row {
         @apply mt-3 grid gap-2 grid-cols-[1rem_1fr] items-center sm:grid-cols-[2rem_1fr];
       }
@@ -506,6 +522,35 @@
             <div class="axis-label" id="mvalue-axis"></div>
             <div id="mvalue-shell" class="chart-shell chart-shell-square">
               <canvas id="mvalue" class="chart-canvas"></canvas>
+              <div class="mvalue-readout-shell hidden" id="mvalue-readout-shell">
+                <div class="mvalue-readout-row">
+                  <span class="mvalue-readout-icon" aria-hidden="true">
+                    <svg class="icon-small" viewBox="0 0 16 16" fill="none">
+                      <path d="M2 8H14" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                  <span class="mvalue-readout-value" id="mvalue-readout-mvalue-x"></span>
+                  <span class="mvalue-readout-value" id="mvalue-readout-mvalue-y"></span>
+                </div>
+                <div class="mvalue-readout-row">
+                  <span class="mvalue-readout-icon" aria-hidden="true">
+                    <svg class="icon-small" viewBox="0 0 16 16" fill="none">
+                      <path d="M2 8H14" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                  <span class="mvalue-readout-value" id="mvalue-readout-gradient-x"></span>
+                  <span class="mvalue-readout-value" id="mvalue-readout-gradient-y"></span>
+                </div>
+                <div class="mvalue-readout-row">
+                  <span class="mvalue-readout-icon" aria-hidden="true">
+                    <svg class="icon-small" viewBox="0 0 16 16" fill="none">
+                      <path d="M2 8H14" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="4 3"/>
+                    </svg>
+                  </span>
+                  <span class="mvalue-readout-value" id="mvalue-readout-ambient-x"></span>
+                  <span class="mvalue-readout-value" id="mvalue-readout-ambient-y"></span>
+                </div>
+              </div>
             </div>
           </div>
           <div class="chart-time-row">
