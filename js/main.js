@@ -6,6 +6,7 @@
     drawDepthScene,
     drawSaturationScene,
     drawSpeedScene,
+    drawMValueScene,
     updateReadouts,
     formatTime,
     formatDepth,
@@ -14,12 +15,15 @@
     formatPercent
   } = window.DiveSim.ui;
 
+  const { COMPARTMENTS, NITROGEN_FRACTION, WATER_VAPOR_PRESSURE } = window.DiveSim.constants;
   const canvas = document.getElementById("profile");
   const canvasContext = canvas.getContext("2d");
   const saturationCanvas = document.getElementById("saturation");
   const saturationContext = saturationCanvas.getContext("2d");
   const speedCanvas = document.getElementById("speed");
   const speedContext = speedCanvas.getContext("2d");
+  const mValueCanvas = document.getElementById("mvalue");
+  const mValueContext = mValueCanvas.getContext("2d");
   const depthReadout = document.getElementById("depth-readout");
   const timeReadout = document.getElementById("time-readout");
   const saturationReadout = document.getElementById("saturation-readout");
@@ -34,6 +38,8 @@
   const speedTimeAxis = document.getElementById("speed-time-axis");
   const saturationAxis = document.getElementById("sat-axis");
   const speedAxis = document.getElementById("speed-axis");
+  const mValueAxis = document.getElementById("mvalue-axis");
+  const mValueAmbientAxis = document.getElementById("mvalue-ambient-axis");
   const gradientFactorLowInput = document.getElementById("gf-low");
   const gradientFactorHighInput = document.getElementById("gf-high");
   const gradientFactorLowValue = document.getElementById("gf-low-value");
@@ -87,6 +93,7 @@
     resizeCanvasElement(canvas, canvasContext, canvasShell);
     resizeCanvasElement(saturationCanvas, saturationContext, saturationShell);
     resizeCanvasElement(speedCanvas, speedContext, speedShell);
+    resizeCanvasElement(mValueCanvas, mValueContext, mValueShell);
     draw();
   }
 
@@ -189,6 +196,21 @@
       speedLabels.push(formatSpeed(value, true));
     }
     renderAxis(speedAxis, speedLabels);
+
+    const scaleMax = 5;
+    const mValueLabels = [];
+    for (let index = 0; index <= gridRows; index++) {
+      const value = ((gridRows - index) / gridRows) * scaleMax;
+      mValueLabels.push(formatPressure(value));
+    }
+    renderAxis(mValueAxis, mValueLabels);
+
+    const ambientLabels = [];
+    for (let index = 0; index <= gridColumns; index++) {
+      const value = (index / gridColumns) * scaleMax;
+      ambientLabels.push(formatPressure(value));
+    }
+    renderAxis(mValueAmbientAxis, ambientLabels);
   }
 
   function mapPointerToProfilePoint(pointerX, pointerY) {
@@ -433,6 +455,14 @@
       state.speedSegments,
       state.maxSpeed
     );
+    drawMValueScene(
+      mValueContext,
+      mValueCanvas,
+      state,
+      COMPARTMENTS,
+      NITROGEN_FRACTION,
+      WATER_VAPOR_PRESSURE
+    );
   }
 
   function renderStops() {
@@ -629,6 +659,7 @@
   const canvasShell = document.getElementById("profile-shell");
   const saturationShell = document.getElementById("saturation-shell");
   const speedShell = document.getElementById("speed-shell");
+  const mValueShell = document.getElementById("mvalue-shell");
   window.addEventListener("resize", resizeCanvas);
   if (canvasShell && "ResizeObserver" in window) {
     const observer = new ResizeObserver(() => resizeCanvas());
@@ -638,6 +669,9 @@
     }
     if (speedShell) {
       observer.observe(speedShell);
+    }
+    if (mValueShell) {
+      observer.observe(mValueShell);
     }
   }
   resizeCanvas();

@@ -129,6 +129,11 @@
       .chart-shell-compact {
         @apply h-[22vh] min-h-[160px] max-h-[220px];
       }
+      .chart-shell-square {
+        aspect-ratio: 1 / 1;
+        height: auto;
+        max-height: 420px;
+      }
       .chart-canvas {
         @apply block h-full w-full;
         touch-action: none;
@@ -392,23 +397,6 @@
 
       <div class="column-grid">
         <div class="card">
-          <div class="panel-title" data-i18n="params.title"></div>
-          <div class="param-list" id="dive-params">
-            <div class="param-row">
-              <span data-i18n="params.maxDepth"></span>
-              <span class="param-value" id="param-max-depth"></span>
-            </div>
-            <div class="param-row">
-              <span data-i18n="params.avgDepth"></span>
-              <span class="param-value" id="param-avg-depth"></span>
-            </div>
-            <div class="param-row">
-              <span data-i18n="params.duration"></span>
-              <span class="param-value" id="param-duration"></span>
-            </div>
-          </div>
-        </div>
-        <div class="card">
           <div class="card-grid">
             <div>
               <label class="field-label" for="gf-low" data-i18n="inputs.gfLow"></label>
@@ -430,6 +418,19 @@
           </div>
         </div>
         <div class="card">
+          <div class="eyebrow" data-i18n="labels.mValue"></div>
+          <div class="chart-grid">
+            <div class="axis-label" id="mvalue-axis"></div>
+            <div id="mvalue-shell" class="chart-shell chart-shell-square">
+              <canvas id="mvalue" class="chart-canvas"></canvas>
+            </div>
+          </div>
+          <div class="chart-time-row">
+            <div></div>
+            <div class="axis-time" id="mvalue-ambient-axis"></div>
+          </div>
+        </div>
+        <div class="card">
           <div class="panel-title">
             <span data-i18n="stops.title"></span>
           </div>
@@ -439,6 +440,23 @@
           </div>
           <div class="stop-list" id="stop-list"></div>
           <p class="stop-empty" id="stop-empty" data-i18n="stops.empty"></p>
+        </div>
+        <div class="card">
+          <div class="panel-title" data-i18n="params.title"></div>
+          <div class="param-list" id="dive-params">
+            <div class="param-row">
+              <span data-i18n="params.maxDepth"></span>
+              <span class="param-value" id="param-max-depth"></span>
+            </div>
+            <div class="param-row">
+              <span data-i18n="params.avgDepth"></span>
+              <span class="param-value" id="param-avg-depth"></span>
+            </div>
+            <div class="param-row">
+              <span data-i18n="params.duration"></span>
+              <span class="param-value" id="param-duration"></span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

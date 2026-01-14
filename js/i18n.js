@@ -18,6 +18,7 @@
           metres: "Dive profile",
           saturation: "Tissue nitrogen pressure",
           speed: "Ascent / descent speed (m/min)",
+          mValue: "M-values & gradient factors",
           minutes: "Time"
         },
         inputs: {
@@ -103,6 +104,7 @@
           metres: "Profil de plongée",
           saturation: "Pression partielle d'azote dissous dans les tissus",
           speed: "Vitesse de remontée / descente (m/min)",
+          mValue: "Valeurs M et facteurs de gradient",
           minutes: "Temps"
         },
         inputs: {

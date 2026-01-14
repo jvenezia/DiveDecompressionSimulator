@@ -56,6 +56,20 @@
     };
   }
 
+  function getMaxMValuePressure(ambientPressure, compartments) {
+    if (!Array.isArray(compartments) || !compartments.length) {
+      return ambientPressure;
+    }
+    let maxValue = ambientPressure;
+    compartments.forEach((compartment) => {
+      const value = compartment.aCoefficient + compartment.bCoefficient * ambientPressure;
+      if (value > maxValue) {
+        maxValue = value;
+      }
+    });
+    return maxValue;
+  }
+
   function drawDepthScene(canvasContext, canvas, state, profilePoints, timeline, stopSchedule) {
     const { width, height } = getCanvasSize(canvas);
     canvasContext.clearRect(0, 0, width, height);
@@ -348,6 +362,214 @@
     }
   }
 
+  function getDominantCompartment(ambientPressure, compartments) {
+    if (!Array.isArray(compartments) || compartments.length === 0) {
+      return null;
+    }
+    let dominant = compartments[0];
+    let maxValue = dominant.aCoefficient + dominant.bCoefficient * ambientPressure;
+    compartments.forEach((compartment) => {
+      const value = compartment.aCoefficient + compartment.bCoefficient * ambientPressure;
+      if (value > maxValue) {
+        dominant = compartment;
+        maxValue = value;
+      }
+    });
+    return dominant;
+  }
+
+  function drawMValueScene(
+    canvasContext,
+    canvas,
+    state,
+    compartments,
+    nitrogenFraction,
+    waterVaporPressure
+  ) {
+    const { width, height } = getCanvasSize(canvas);
+    canvasContext.clearRect(0, 0, width, height);
+
+    canvasContext.save();
+    canvasContext.strokeStyle = "rgba(16, 36, 58, 0.08)";
+    canvasContext.lineWidth = 1;
+    const gridRows = 6;
+    const gridColumns = 8;
+    for (let index = 1; index < gridRows; index++) {
+      const yPosition = (index / gridRows) * height;
+      canvasContext.beginPath();
+      canvasContext.moveTo(0, yPosition);
+      canvasContext.lineTo(width, yPosition);
+      canvasContext.stroke();
+    }
+    for (let index = 1; index < gridColumns; index++) {
+      const xPosition = (index / gridColumns) * width;
+      canvasContext.beginPath();
+      canvasContext.moveTo(xPosition, 0);
+      canvasContext.lineTo(xPosition, height);
+      canvasContext.stroke();
+    }
+    canvasContext.restore();
+
+    const maxAmbientPressure = Math.max(1, 1 + state.maxDepth / 10);
+    const safeNitrogenFraction = Math.max(0.01, nitrogenFraction || 0);
+    const safeWaterVaporPressure = Math.max(0, waterVaporPressure || 0);
+    const dominantCompartment = getDominantCompartment(maxAmbientPressure, compartments);
+    const aCoefficient = dominantCompartment?.aCoefficient ?? 0;
+    const bCoefficient = dominantCompartment?.bCoefficient ?? 1;
+    const scaleMax = 5;
+    const lowGradientFactor = clamp(state.gradientFactorLow, 0, 1);
+    const highGradientFactor = clamp(state.gradientFactorHigh, 0, 1);
+    const highPointPressure =
+      highGradientFactor * (aCoefficient + bCoefficient * safeWaterVaporPressure);
+
+    const slopeMValue = bCoefficient / safeNitrogenFraction;
+    const interceptMValue = aCoefficient + bCoefficient * safeWaterVaporPressure;
+    const currentStartX = 0;
+    const currentStartY = highPointPressure;
+    const mValueAtScaleMax = slopeMValue * scaleMax + interceptMValue;
+    const currentEndX = scaleMax;
+    const currentEndY = scaleMax + lowGradientFactor * (mValueAtScaleMax - scaleMax);
+    const currentSlope = Math.abs(currentEndX - currentStartX) > 0.0001
+      ? (currentEndY - currentStartY) / (currentEndX - currentStartX)
+      : 0;
+    const currentIntercept = currentStartY - currentSlope * currentStartX;
+
+    const toScreenX = (value) => (value / scaleMax) * width;
+    const toScreenY = (value) => height - (value / scaleMax) * height;
+    const toDataX = (value) => (value / width) * scaleMax;
+    const toDataY = (value) => ((height - value) / height) * scaleMax;
+
+    const drawLine = (slope, intercept, strokeStyle) => {
+      const candidates = [];
+      const yAtZero = intercept;
+      if (Number.isFinite(yAtZero) && yAtZero >= 0 && yAtZero <= scaleMax) {
+        candidates.push({ x: 0, y: yAtZero });
+      }
+      const yAtMax = slope * scaleMax + intercept;
+      if (Number.isFinite(yAtMax) && yAtMax >= 0 && yAtMax <= scaleMax) {
+        candidates.push({ x: scaleMax, y: yAtMax });
+      }
+      if (Math.abs(slope) > 0.0001) {
+        const xAtZero = -intercept / slope;
+        if (Number.isFinite(xAtZero) && xAtZero >= 0 && xAtZero <= scaleMax) {
+          candidates.push({ x: xAtZero, y: 0 });
+        }
+        const xAtMax = (scaleMax - intercept) / slope;
+        if (Number.isFinite(xAtMax) && xAtMax >= 0 && xAtMax <= scaleMax) {
+          candidates.push({ x: xAtMax, y: scaleMax });
+        }
+      }
+      const uniquePoints = [];
+      candidates.forEach((point) => {
+        const exists = uniquePoints.some((stored) =>
+          Math.abs(stored.x - point.x) < 0.001 && Math.abs(stored.y - point.y) < 0.001);
+        if (!exists) {
+          uniquePoints.push(point);
+        }
+      });
+      if (uniquePoints.length < 2) {
+        return;
+      }
+      let first = uniquePoints[0];
+      let last = uniquePoints[1];
+      if (uniquePoints.length > 2) {
+        let maxDistance = -1;
+        for (let firstIndex = 0; firstIndex < uniquePoints.length; firstIndex++) {
+          for (let secondIndex = firstIndex + 1; secondIndex < uniquePoints.length; secondIndex++) {
+            const start = uniquePoints[firstIndex];
+            const end = uniquePoints[secondIndex];
+            const distance = (start.x - end.x) ** 2 + (start.y - end.y) ** 2;
+            if (distance > maxDistance) {
+              maxDistance = distance;
+              first = start;
+              last = end;
+            }
+          }
+        }
+      }
+      canvasContext.save();
+      canvasContext.strokeStyle = strokeStyle;
+      canvasContext.lineWidth = 2;
+      canvasContext.beginPath();
+      canvasContext.moveTo(toScreenX(first.x), toScreenY(first.y));
+      canvasContext.lineTo(toScreenX(last.x), toScreenY(last.y));
+      canvasContext.stroke();
+      canvasContext.restore();
+    };
+
+    drawLine(slopeMValue, interceptMValue, "rgba(239, 68, 68, 0.9)");
+    drawLine(1, 0, "rgba(34, 197, 94, 0.9)");
+
+    const gradientSteps = 140;
+    const ambientColor = [34, 197, 94];
+    const mValueColor = [239, 68, 68];
+    for (let index = 0; index < gradientSteps; index++) {
+      const startX = (index / gradientSteps) * scaleMax;
+      const endX = ((index + 1) / gradientSteps) * scaleMax;
+      const startY = currentSlope * startX + currentIntercept;
+      const endY = currentSlope * endX + currentIntercept;
+      if (
+        !Number.isFinite(startY) ||
+        !Number.isFinite(endY) ||
+        startY < 0 ||
+        startY > scaleMax ||
+        endY < 0 ||
+        endY > scaleMax
+      ) {
+        continue;
+      }
+      const midX = (startX + endX) / 2;
+      const midY = (startY + endY) / 2;
+      const ambientMidY = midX;
+      const mValueMidY = slopeMValue * midX + interceptMValue;
+      const range = mValueMidY - ambientMidY;
+      const ratio = range !== 0
+        ? clamp((midY - ambientMidY) / range, 0, 1)
+        : 0;
+      const red = Math.round(ambientColor[0] + (mValueColor[0] - ambientColor[0]) * ratio);
+      const green = Math.round(ambientColor[1] + (mValueColor[1] - ambientColor[1]) * ratio);
+      const blue = Math.round(ambientColor[2] + (mValueColor[2] - ambientColor[2]) * ratio);
+      canvasContext.save();
+      canvasContext.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+      canvasContext.lineWidth = 2;
+      canvasContext.beginPath();
+      canvasContext.moveTo(toScreenX(startX), toScreenY(startY));
+      canvasContext.lineTo(toScreenX(endX), toScreenY(endY));
+      canvasContext.stroke();
+      canvasContext.restore();
+    }
+
+    const topZoneY = 0;
+    const topZoneDataY = toDataY(topZoneY);
+    const topZoneStartX = clamp((topZoneDataY - interceptMValue) / slopeMValue, 0, scaleMax);
+    const topZoneEndX = clamp(topZoneDataY, 0, scaleMax);
+    const topZoneHeight = Math.max(6, Math.round(height * 0.025));
+    canvasContext.save();
+    canvasContext.fillStyle = "rgba(168, 85, 247, 0.22)";
+    canvasContext.fillRect(
+      toScreenX(Math.min(topZoneStartX, topZoneEndX)),
+      topZoneY,
+      Math.abs(toScreenX(topZoneEndX) - toScreenX(topZoneStartX)),
+      topZoneHeight
+    );
+    canvasContext.restore();
+
+    const leftZoneX = 0;
+    const leftZoneDataX = toDataX(leftZoneX);
+    const leftZoneStartY = clamp(slopeMValue * leftZoneDataX + interceptMValue, 0, scaleMax);
+    const leftZoneEndY = clamp(leftZoneDataX, 0, scaleMax);
+    const leftZoneWidth = Math.max(6, Math.round(width * 0.025));
+    canvasContext.save();
+    canvasContext.fillStyle = "rgba(245, 158, 11, 0.2)";
+    canvasContext.fillRect(
+      leftZoneX,
+      toScreenY(Math.max(leftZoneStartY, leftZoneEndY)),
+      leftZoneWidth,
+      Math.abs(toScreenY(leftZoneStartY) - toScreenY(leftZoneEndY))
+    );
+    canvasContext.restore();
+  }
+
   function updateReadouts({ snapshot, depthReadout, timeReadout }) {
     if (!snapshot) {
       return;
@@ -367,6 +589,7 @@
     drawDepthScene,
     drawSaturationScene,
     drawSpeedScene,
+    drawMValueScene,
     updateReadouts,
     getTranslation
   };
