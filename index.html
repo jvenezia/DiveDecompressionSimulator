@@ -201,6 +201,43 @@
       .footer-link {
         @apply inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-sky-700 transition hover:text-sky-900;
       }
+      .chart-hint {
+        @apply absolute left-1/2 top-1/2 z-10 w-[85%] -translate-x-1/2 -translate-y-1/2 text-center text-sm font-semibold uppercase tracking-[0.2em] text-slate-500 sm:text-base;
+        font-family: "Space Grotesk", sans-serif;
+        pointer-events: none;
+        color: transparent;
+        background-image: linear-gradient(120deg, #475569, #cbd5f1, #64748b);
+        background-size: 200% 200%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        animation: hint-flicker 4.5s linear infinite;
+      }
+      .chart-hint-hidden {
+        opacity: 0;
+        visibility: hidden;
+        animation-play-state: paused;
+      }
+    }
+
+    @keyframes hint-flicker {
+      0% {
+        opacity: 0.8;
+        background-position: 0% 50%;
+      }
+      25% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+        background-position: 100% 50%;
+      }
+      75% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.8;
+        background-position: 0% 50%;
+      }
     }
   </style>
 </head>
@@ -242,6 +279,7 @@
             <div class="axis-label" id="depth-axis"></div>
             <div id="profile-shell" class="chart-shell">
               <canvas id="profile" class="chart-canvas"></canvas>
+              <div id="profile-hint" class="chart-hint">Dessinez un profile de plongée</div>
               <div class="chart-readout hidden" id="profile-readout">
                 <span id="depth-readout"></span>
                 <span id="time-readout"></span>

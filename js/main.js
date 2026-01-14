@@ -25,6 +25,7 @@
   const saturationReadout = document.getElementById("saturation-readout");
   const speedReadout = document.getElementById("speed-readout");
   const profileReadout = document.getElementById("profile-readout");
+  const profileHint = document.getElementById("profile-hint");
   const saturationReadoutShell = document.getElementById("saturation-readout-shell");
   const speedReadoutShell = document.getElementById("speed-readout-shell");
   const depthAxis = document.getElementById("depth-axis");
@@ -50,6 +51,7 @@
   const state = {
     points: [],
     drawing: false,
+    hasDrawn: false,
     lastPoint: null,
     lastIndex: null,
     totalMinutes: DEFAULT_TOTAL_MINUTES,
@@ -515,6 +517,10 @@
   canvas.addEventListener("pointerdown", (event) => {
     preventTouchScroll(event);
     state.drawing = true;
+    if (!state.hasDrawn && profileHint) {
+      state.hasDrawn = true;
+      profileHint.classList.add("chart-hint-hidden");
+    }
     canvas.setPointerCapture(event.pointerId);
     const point = mapPointerToProfilePoint(event.offsetX, event.offsetY);
     fillBetweenPoints(state.lastPoint, point);
