@@ -68,7 +68,21 @@
           gfHigh:
             "Applies near the surface. The lower the value, the longer the stops last.",
           gfNote:
-            "Lower GF values make stops deeper and longer, which is more conservative. 100% is the least conservative."
+            "Lower GF values make stops deeper and longer, which is more conservative. 100% is the least conservative.",
+          mvalueAxisX:
+            "The horizontal axis represents ambient nitrogen partial pressure.",
+          mvalueAxisY:
+            "The vertical axis represents the maximum tissue nitrogen partial pressure allowed by the decompression model.",
+          mvalueLine:
+            "M-Value: maximum tissue nitrogen pressure (equivalent to GF Low/High at 100%).",
+          mvalueAmbientLine:
+            "Ambient pressure (equivalent to GF Low/High at 0%).",
+          mvalueGradientLine:
+            "Allowable pressure adjusted by the selected GF Low/High.",
+          mvalueLowZone:
+            "Where GF Low has the most influence (high pressure, depth).",
+          mvalueHighZone:
+            "Where GF High has the most influence (low pressure, near the surface)."
         },
         language: {
           label: "Language",
@@ -104,7 +118,7 @@
           metres: "Profil de plongée",
           saturation: "Pression partielle d'azote dissous dans les tissus",
           speed: "Vitesse de remontée / descente (m/min)",
-          mValue: "Valeurs M et facteurs de gradient",
+          mValue: "\"M-Value\" et facteurs de gradient (GF)",
           minutes: "Temps"
         },
         inputs: {
@@ -154,7 +168,21 @@
           gfHigh:
             "Agit près de la surface. Plus la valeur est faible, plus les paliers dureront longtemps.",
           gfNote:
-            "Des GF plus bas rendent les paliers plus profonds et plus longs, donc plus conservateurs. 100% est le moins conservateur."
+            "Des GF plus bas rendent les paliers plus profonds et plus longs, donc plus conservateurs. 100% est le moins conservateur.",
+          mvalueAxisX:
+            "L'axe horizontal représente la pression partielle d'azote ambiante.",
+          mvalueAxisY:
+            "L'axe vertical représente la pression partielle d'azote tissulaire maximale autorisée par l'algorithme de désaturation.",
+          mvalueLine:
+            "\"M-Value\": pression d'azote tissulaire maximale (équivaut à un GF bas/haut à 100 %).",
+          mvalueAmbientLine:
+            "Pression ambiante (équivaut à un GF bas/haut à 0 %).",
+          mvalueGradientLine:
+            "Pression maximale ajustée par les GF bas/haut sélectionnés.",
+          mvalueLowZone:
+            "Zone d'effet du GF bas (haute pression, donc en profondeur).",
+          mvalueHighZone:
+            "Zone d'effet du GF haut (basse pression, donc vers la surface)."
         },
         language: {
           label: "Langue",

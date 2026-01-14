@@ -604,12 +604,30 @@
     handleHoverLeave();
   });
 
+  function updateRangeFill(inputElement) {
+    if (!inputElement) return;
+    const minimum = Number(inputElement.min) || 0;
+    const maximum = Number(inputElement.max) || 100;
+    const rawValue = Number(inputElement.value);
+    const clampedValue = clamp(
+      Number.isFinite(rawValue) ? rawValue : minimum,
+      minimum,
+      maximum
+    );
+    const rangeSpan = maximum - minimum;
+    const percent =
+      rangeSpan > 0 ? ((clampedValue - minimum) / rangeSpan) * 100 : 0;
+    inputElement.style.setProperty("--range-fill", `${percent}%`);
+  }
+
   function updateGradientFactorDisplay() {
     if (gradientFactorLowValue && gradientFactorLowInput) {
       gradientFactorLowValue.textContent = String(gradientFactorLowInput.value);
+      updateRangeFill(gradientFactorLowInput);
     }
     if (gradientFactorHighValue && gradientFactorHighInput) {
       gradientFactorHighValue.textContent = String(gradientFactorHighInput.value);
+      updateRangeFill(gradientFactorHighInput);
     }
   }
 

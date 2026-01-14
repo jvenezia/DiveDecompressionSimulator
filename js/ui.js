@@ -378,6 +378,44 @@
     return dominant;
   }
 
+  function drawRoundedRect(canvasContext, xPosition, yPosition, rectWidth, rectHeight, cornerRadius) {
+    const safeRadius = Math.max(
+      0,
+      Math.min(cornerRadius, Math.abs(rectWidth) / 2, Math.abs(rectHeight) / 2)
+    );
+    canvasContext.beginPath();
+    canvasContext.moveTo(xPosition + safeRadius, yPosition);
+    canvasContext.arcTo(
+      xPosition + rectWidth,
+      yPosition,
+      xPosition + rectWidth,
+      yPosition + rectHeight,
+      safeRadius
+    );
+    canvasContext.arcTo(
+      xPosition + rectWidth,
+      yPosition + rectHeight,
+      xPosition,
+      yPosition + rectHeight,
+      safeRadius
+    );
+    canvasContext.arcTo(
+      xPosition,
+      yPosition + rectHeight,
+      xPosition,
+      yPosition,
+      safeRadius
+    );
+    canvasContext.arcTo(
+      xPosition,
+      yPosition,
+      xPosition + rectWidth,
+      yPosition,
+      safeRadius
+    );
+    canvasContext.closePath();
+  }
+
   function drawMValueScene(
     canvasContext,
     canvas,
@@ -543,30 +581,60 @@
     const topZoneDataY = toDataY(topZoneY);
     const topZoneStartX = clamp((topZoneDataY - interceptMValue) / slopeMValue, 0, scaleMax);
     const topZoneEndX = clamp(topZoneDataY, 0, scaleMax);
-    const topZoneHeight = Math.max(6, Math.round(height * 0.025));
-    canvasContext.save();
-    canvasContext.fillStyle = "rgba(168, 85, 247, 0.22)";
-    canvasContext.fillRect(
-      toScreenX(Math.min(topZoneStartX, topZoneEndX)),
-      topZoneY,
-      Math.abs(toScreenX(topZoneEndX) - toScreenX(topZoneStartX)),
-      topZoneHeight
+    const topZoneHeight = Math.max(3, Math.round(height * 0.0125));
+    const topZoneStartScreenX = toScreenX(Math.min(topZoneStartX, topZoneEndX));
+    const topZoneWidth = Math.abs(toScreenX(topZoneEndX) - toScreenX(topZoneStartX));
+    const topZoneRadius = Math.min(10, Math.round(topZoneHeight * 0.5));
+    const topZonePadding = Math.max(4, Math.round(width * 0.01));
+    const topZonePaddedStart = clamp(
+      topZoneStartScreenX - topZonePadding,
+      0,
+      width
     );
+    const topZonePaddedEnd = clamp(
+      topZoneStartScreenX + topZoneWidth + topZonePadding,
+      0,
+      width
+    );
+    const topZonePaddedWidth = Math.max(0, topZonePaddedEnd - topZonePaddedStart);
+    canvasContext.save();
+    canvasContext.fillStyle = "rgb(168, 85, 247)";
+    drawRoundedRect(
+      canvasContext,
+      topZonePaddedStart,
+      topZoneY,
+      topZonePaddedWidth,
+      topZoneHeight,
+      topZoneRadius
+    );
+    canvasContext.fill();
     canvasContext.restore();
 
     const leftZoneX = 0;
     const leftZoneDataX = toDataX(leftZoneX);
     const leftZoneStartY = clamp(slopeMValue * leftZoneDataX + interceptMValue, 0, scaleMax);
     const leftZoneEndY = clamp(leftZoneDataX, 0, scaleMax);
-    const leftZoneWidth = Math.max(6, Math.round(width * 0.025));
+    const leftZoneWidth = Math.max(3, Math.round(width * 0.0125));
+    const leftZoneStartScreenY = toScreenY(leftZoneStartY);
+    const leftZoneEndScreenY = toScreenY(leftZoneEndY);
+    const leftZoneTop = Math.min(leftZoneStartScreenY, leftZoneEndScreenY);
+    const leftZoneHeight = Math.abs(leftZoneEndScreenY - leftZoneStartScreenY);
+    const leftZoneRadius = Math.min(10, Math.round(leftZoneWidth * 0.5));
+    const leftZonePadding = Math.max(4, Math.round(height * 0.01));
+    const leftZonePaddedTop = clamp(leftZoneTop - leftZonePadding, 0, height);
+    const leftZonePaddedBottom = clamp(leftZoneTop + leftZoneHeight + leftZonePadding, 0, height);
+    const leftZonePaddedHeight = Math.max(0, leftZonePaddedBottom - leftZonePaddedTop);
     canvasContext.save();
-    canvasContext.fillStyle = "rgba(245, 158, 11, 0.2)";
-    canvasContext.fillRect(
+    canvasContext.fillStyle = "rgb(245, 158, 11)";
+    drawRoundedRect(
+      canvasContext,
       leftZoneX,
-      toScreenY(Math.max(leftZoneStartY, leftZoneEndY)),
+      leftZonePaddedTop,
       leftZoneWidth,
-      Math.abs(toScreenY(leftZoneStartY) - toScreenY(leftZoneEndY))
+      leftZonePaddedHeight,
+      leftZoneRadius
     );
+    canvasContext.fill();
     canvasContext.restore();
   }
 
