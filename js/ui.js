@@ -476,7 +476,7 @@
     const toDataX = (value) => (value / width) * scaleMax;
     const toDataY = (value) => ((height - value) / height) * scaleMax;
 
-    const drawLine = (slope, intercept, strokeStyle) => {
+    const drawLine = (slope, intercept, strokeStyle, lineDash = []) => {
       const candidates = [];
       const yAtZero = intercept;
       if (Number.isFinite(yAtZero) && yAtZero >= 0 && yAtZero <= scaleMax) {
@@ -527,6 +527,7 @@
       canvasContext.save();
       canvasContext.strokeStyle = strokeStyle;
       canvasContext.lineWidth = 2;
+      canvasContext.setLineDash(lineDash);
       canvasContext.beginPath();
       canvasContext.moveTo(toScreenX(first.x), toScreenY(first.y));
       canvasContext.lineTo(toScreenX(last.x), toScreenY(last.y));
@@ -534,47 +535,9 @@
       canvasContext.restore();
     };
 
-    drawLine(slopeMValue, interceptMValue, "rgba(239, 68, 68, 0.9)");
-    drawLine(1, 0, "rgba(34, 197, 94, 0.9)");
-
-    const gradientSteps = 140;
-    const ambientColor = [34, 197, 94];
-    const mValueColor = [239, 68, 68];
-    for (let index = 0; index < gradientSteps; index++) {
-      const startX = (index / gradientSteps) * scaleMax;
-      const endX = ((index + 1) / gradientSteps) * scaleMax;
-      const startY = currentSlope * startX + currentIntercept;
-      const endY = currentSlope * endX + currentIntercept;
-      if (
-        !Number.isFinite(startY) ||
-        !Number.isFinite(endY) ||
-        startY < 0 ||
-        startY > scaleMax ||
-        endY < 0 ||
-        endY > scaleMax
-      ) {
-        continue;
-      }
-      const midX = (startX + endX) / 2;
-      const midY = (startY + endY) / 2;
-      const ambientMidY = midX;
-      const mValueMidY = slopeMValue * midX + interceptMValue;
-      const range = mValueMidY - ambientMidY;
-      const ratio = range !== 0
-        ? clamp((midY - ambientMidY) / range, 0, 1)
-        : 0;
-      const red = Math.round(ambientColor[0] + (mValueColor[0] - ambientColor[0]) * ratio);
-      const green = Math.round(ambientColor[1] + (mValueColor[1] - ambientColor[1]) * ratio);
-      const blue = Math.round(ambientColor[2] + (mValueColor[2] - ambientColor[2]) * ratio);
-      canvasContext.save();
-      canvasContext.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
-      canvasContext.lineWidth = 2;
-      canvasContext.beginPath();
-      canvasContext.moveTo(toScreenX(startX), toScreenY(startY));
-      canvasContext.lineTo(toScreenX(endX), toScreenY(endY));
-      canvasContext.stroke();
-      canvasContext.restore();
-    }
+    drawLine(slopeMValue, interceptMValue, "rgba(148, 163, 184, 0.9)");
+    drawLine(1, 0, "rgba(148, 163, 184, 0.9)", [6, 4]);
+    drawLine(currentSlope, currentIntercept, "rgba(239, 68, 68, 0.9)");
 
     const topZoneY = 0;
     const topZoneDataY = toDataY(topZoneY);
