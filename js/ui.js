@@ -5,6 +5,11 @@
     return Math.min(Math.max(value, min), max);
   }
 
+  const pressureFormatter = new Intl.NumberFormat(undefined, {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 0
+  });
+
   function formatTime(minutes) {
     const totalSeconds = Math.max(0, Math.round(minutes * 60));
     const minutesPart = Math.floor(totalSeconds / 60);
@@ -20,13 +25,7 @@
 
   function formatPressure(pressureBar) {
     const value = Number.isFinite(pressureBar) ? pressureBar : 0;
-    let decimals = 2;
-    if (value % 1 === 0) {
-      decimals = 0;
-    } else if ((value * 10) % 1 === 0) {
-      decimals = 1;
-    }
-    return `${value.toFixed(decimals)}b`;
+    return `${pressureFormatter.format(value)}b`;
   }
 
   function formatSpeed(speedMetersPerMinute, showPlus = false) {
