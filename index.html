@@ -183,6 +183,9 @@
       .eyebrow {
         @apply mb-5 text-xs font-semibold uppercase tracking-wide text-slate-500;
       }
+      .eyebrow-subtitle {
+        @apply -mt-3 mb-5 text-xs text-slate-500;
+      }
       .chart-grid {
         @apply grid gap-2 grid-cols-[1rem_1fr] items-stretch sm:grid-cols-[2rem_1fr];
       }
@@ -498,6 +501,7 @@
         </div>
         <div class="card">
           <div class="eyebrow" data-i18n="labels.mValue"></div>
+          <p class="eyebrow-subtitle" data-i18n="info.mvalueSubtitle" data-i18n-html="true"></p>
           <div class="chart-grid">
             <div class="axis-label" id="mvalue-axis"></div>
             <div id="mvalue-shell" class="chart-shell chart-shell-square">

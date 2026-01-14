@@ -73,6 +73,8 @@
             "The horizontal axis represents ambient nitrogen partial pressure.",
           mvalueAxisY:
             "The vertical axis represents the maximum tissue nitrogen partial pressure allowed by the decompression model.",
+          mvalueSubtitle:
+            "This chart shows the <b>allowed limit</b> for tissue nitrogen partial pressure based on ambient nitrogen partial pressure. Above it, the risk of bubble formation is considered too high.",
           mvalueLine:
             "M-Value: maximum tissue nitrogen pressure (equivalent to GF Low/High at 100%).",
           mvalueAmbientLine:
@@ -173,6 +175,8 @@
             "L'axe horizontal représente la pression partielle d'azote ambiante.",
           mvalueAxisY:
             "L'axe vertical représente la pression partielle d'azote tissulaire maximale autorisée par l'algorithme de désaturation.",
+          mvalueSubtitle:
+            "Ce graphique montre la <b>limite autorisée</b> de pression partielle d'azote tissulaire en fonction de la pression partielle d'azote ambiante. Au-dessus, on considère que le risque de création de bulles est trop élevé.",
           mvalueLine:
             "\"M-Value\": pression d'azote tissulaire maximale (équivaut à un GF bas/haut à 100 %).",
           mvalueAmbientLine:
